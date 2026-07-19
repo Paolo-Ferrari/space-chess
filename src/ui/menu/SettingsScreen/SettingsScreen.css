@@ -1,0 +1,13 @@
+.settings-screen {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 28px 24px;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+.settings-note {
+  color: var(--text-muted);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}

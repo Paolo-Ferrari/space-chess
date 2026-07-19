@@ -1,0 +1,331 @@
+.play-lobby {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 30%);
+  height: 100%;
+  min-height: 0;
+}
+
+.play-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 40px;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  transition: background 0.35s ease;
+}
+
+.play-stage--welcome {
+  background:
+    radial-gradient(ellipse at 40% 30%, rgba(0, 196, 255, 0.12), transparent 55%),
+    radial-gradient(ellipse at 80% 80%, rgba(0, 80, 120, 0.2), transparent 50%),
+    linear-gradient(160deg, rgba(4, 12, 22, 0.95), rgba(2, 8, 14, 0.98));
+}
+
+.play-stage--sandbox {
+  background:
+    radial-gradient(ellipse at 30% 40%, rgba(0, 220, 180, 0.14), transparent 50%),
+    linear-gradient(150deg, rgba(4, 18, 20, 0.96), rgba(2, 10, 14, 0.98));
+}
+
+.play-stage--vs-ai {
+  background:
+    radial-gradient(ellipse at 70% 35%, rgba(120, 80, 255, 0.16), transparent 50%),
+    linear-gradient(150deg, rgba(10, 8, 24, 0.96), rgba(4, 10, 20, 0.98));
+}
+
+.play-stage--classic {
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(0, 196, 255, 0.18), transparent 55%),
+    linear-gradient(160deg, rgba(4, 16, 28, 0.96), rgba(2, 8, 16, 0.98));
+}
+
+.play-stage--special {
+  background:
+    radial-gradient(ellipse at 40% 50%, rgba(255, 64, 160, 0.14), transparent 50%),
+    linear-gradient(155deg, rgba(20, 8, 24, 0.96), rgba(6, 8, 18, 0.98));
+}
+
+.play-stage--custom {
+  background:
+    radial-gradient(ellipse at 60% 40%, rgba(255, 170, 51, 0.12), transparent 50%),
+    linear-gradient(150deg, rgba(18, 14, 8, 0.96), rgba(6, 10, 16, 0.98));
+}
+
+.play-welcome,
+.play-mode-setup {
+  width: min(560px, 100%);
+  animation: play-stage-in 0.35s ease;
+}
+
+@keyframes play-stage-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.play-welcome-kicker,
+.play-mode-kicker {
+  margin: 0 0 8px;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-family: "Consolas", "Segoe UI Mono", monospace;
+}
+
+.play-welcome-title,
+.play-mode-title {
+  margin: 0 0 14px;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-neon);
+  text-shadow: 0 0 22px var(--glow);
+}
+
+.play-welcome-text,
+.play-mode-blurb {
+  margin: 0;
+  max-width: 42ch;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text-main);
+}
+
+.play-mode-panel {
+  margin-top: 28px;
+  padding: 18px 20px;
+  border: 1px solid rgba(0, 196, 255, 0.28);
+  background: rgba(4, 12, 22, 0.55);
+  box-shadow: 0 0 24px var(--glow-soft);
+}
+
+.play-mode-panel-title {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.play-mode-panel-note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.play-channel-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.play-channel-btn {
+  height: 40px;
+  border: 1px solid rgba(0, 196, 255, 0.35);
+  background: rgba(0, 24, 36, 0.8);
+  color: var(--text-main);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.play-channel-btn:hover {
+  border-color: var(--energy);
+  color: var(--accent-neon);
+}
+
+.play-channel-btn.is-active {
+  border-color: var(--energy);
+  color: var(--accent-neon);
+  box-shadow: 0 0 14px var(--glow-soft);
+}
+
+.play-status {
+  position: absolute;
+  left: 40px;
+  bottom: 28px;
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--accent-neon);
+}
+
+.play-modes-panel {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--glass-border);
+  background: rgba(4, 12, 22, 0.88);
+  min-height: 0;
+}
+
+.play-modes-header {
+  padding: 18px 18px 12px;
+  border-bottom: 1px solid rgba(0, 196, 255, 0.18);
+  flex-shrink: 0;
+}
+
+.play-modes-header h2 {
+  margin: 0 0 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-neon);
+}
+
+.play-modes-header p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.play-modes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  overflow: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.play-mode-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 1px solid rgba(0, 196, 255, 0.28);
+  background: rgba(0, 20, 32, 0.75);
+  color: var(--text-main);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s,
+    color 0.15s,
+    background 0.15s;
+}
+
+.play-mode-btn:hover {
+  border-color: var(--energy);
+  color: var(--accent-neon);
+  box-shadow: 0 0 14px var(--glow-soft);
+}
+
+.play-mode-btn.is-active {
+  border-color: var(--energy);
+  background: rgba(0, 196, 255, 0.12);
+  color: var(--accent-neon);
+  box-shadow: 0 0 18px var(--glow-soft);
+}
+
+.play-mode-btn-mark {
+  flex-shrink: 0;
+  width: 1ch;
+  color: var(--accent-neon);
+  font-family: "Consolas", "Segoe UI Mono", monospace;
+}
+
+.play-mode-btn-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.play-modes-footer {
+  padding: 14px;
+  border-top: 1px solid rgba(0, 196, 255, 0.18);
+  flex-shrink: 0;
+}
+
+.play-start-btn {
+  width: 100%;
+  height: 48px;
+  border: 1px solid rgba(90, 122, 148, 0.35);
+  background: rgba(20, 28, 36, 0.7);
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: not-allowed;
+  opacity: 0.55;
+  transition:
+    opacity 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease,
+    transform 0.25s ease;
+}
+
+.play-start-btn.is-ready {
+  border-color: var(--energy);
+  background: rgba(0, 40, 60, 0.9);
+  color: var(--accent-neon);
+  cursor: pointer;
+  opacity: 1;
+  box-shadow: 0 0 20px var(--glow-soft);
+  animation: play-start-ready 0.4s ease;
+}
+
+.play-start-btn.is-ready:hover {
+  box-shadow: 0 0 28px var(--glow);
+  transform: translateY(-1px);
+}
+
+@keyframes play-start-ready {
+  from {
+    opacity: 0.4;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.app-shell-body:has(.play-lobby) {
+  overflow: hidden;
+}
+
+@media (max-width: 860px) {
+  .play-lobby {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+
+  .play-modes-panel {
+    border-left: none;
+    border-top: 1px solid var(--glass-border);
+    max-height: 42vh;
+  }
+
+  .play-stage {
+    padding: 24px 20px;
+  }
+
+  .play-status {
+    left: 20px;
+    bottom: 16px;
+  }
+}

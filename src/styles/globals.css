@@ -1,0 +1,6 @@
+body {
+  overflow: hidden;
+  background: var(--bg-primary);
+  color: var(--text-main);
+  font-family: "Segoe UI", sans-serif;
+}

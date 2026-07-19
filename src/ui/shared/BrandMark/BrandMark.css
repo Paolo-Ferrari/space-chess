@@ -1,0 +1,49 @@
+.brand-mark {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.brand-mark svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.brand-mark-sm {
+  width: 28px;
+  height: 28px;
+}
+
+.brand-mark-md {
+  width: 40px;
+  height: 40px;
+}
+
+.brand-mark-lg {
+  width: 56px;
+  height: 56px;
+}
+
+.brand-mark-bg {
+  fill: rgba(4, 16, 24, 0.95);
+}
+
+.brand-mark-stroke {
+  stroke: var(--accent-neon);
+  fill: none;
+}
+
+.brand-mark-fill {
+  fill: var(--accent-neon);
+}
+
+.brand-mark-accent {
+  stroke: var(--energy);
+  fill: none;
+}
+
+.brand-mark-dot {
+  fill: var(--accent-neon);
+}

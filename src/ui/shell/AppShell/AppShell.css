@@ -1,0 +1,95 @@
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  background:
+    radial-gradient(ellipse at top, rgba(0, 60, 90, 0.25), transparent 55%),
+    var(--bg-primary);
+  color: var(--text-main);
+  overflow: hidden;
+}
+
+.app-shell-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 56px;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--glass-border);
+  background: rgba(4, 12, 22, 0.88);
+  box-shadow: 0 0 24px var(--glow-soft);
+}
+
+.app-shell-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.app-shell-brand {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent-neon);
+  text-shadow: 0 0 10px var(--glow-soft);
+  white-space: nowrap;
+}
+
+.app-shell-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.app-shell-back {
+  height: 30px;
+  padding: 0 12px;
+  border: 1px solid var(--glass-border);
+  background: rgba(0, 30, 45, 0.7);
+  color: var(--text-main);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+
+.app-shell-back:hover {
+  border-color: var(--energy);
+  color: var(--accent-neon);
+}
+
+.app-shell-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.app-shell-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.app-shell-body:has(.armies-screen) {
+  overflow: hidden;
+}
+
+.app-shell-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.app-shell-body::-webkit-scrollbar-thumb {
+  background: var(--accent-dim);
+}
+
+.app-shell-body::-webkit-scrollbar-track {
+  background: transparent;
+}
