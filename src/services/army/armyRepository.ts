@@ -65,7 +65,18 @@ function writeAll(armies: Army[]): void {
     return;
   }
 
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(armies));
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(armies));
+  } catch {
+    // Quota / private mode — keep in-memory path unavailable; caller still gets Army.
+  }
+}
+
+function newArmyId(): string {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID();
+  }
+  return `army-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
 function isArmyRecord(value: unknown): value is Army {
@@ -131,7 +142,7 @@ export function createArmy(input: {
 }): Army {
   const armies = readAll();
   const army: Army = {
-    id: crypto.randomUUID(),
+    id: newArmyId(),
     name:
       input.name.trim().slice(0, ARMY_NAME_MAX_LENGTH) || "Новая армия",
     heroId: input.heroId,

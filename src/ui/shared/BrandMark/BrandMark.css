@@ -27,23 +27,23 @@
 }
 
 .brand-mark-bg {
-  fill: rgba(4, 16, 24, 0.95);
+  fill: rgba(5, 5, 6, 0.96);
 }
 
 .brand-mark-stroke {
-  stroke: var(--accent-neon);
+  stroke: var(--cp-yellow);
   fill: none;
 }
 
 .brand-mark-fill {
-  fill: var(--accent-neon);
+  fill: var(--cp-yellow);
 }
 
 .brand-mark-accent {
-  stroke: var(--energy);
+  stroke: var(--cp-magenta);
   fill: none;
 }
 
 .brand-mark-dot {
-  fill: var(--accent-neon);
+  fill: var(--cp-yellow);
 }

@@ -3,10 +3,14 @@ import type { Army } from "../army/army.types";
 /** Seat index for offline turn-based match. */
 export type PlayerId = 0 | 1;
 
-export const BOARD_SIZE = 16;
+export const BOARD_SIZE = 8;
 
-/** Orthogonal + diagonal step for MVP move/attack range. */
+/**
+ * Base move (factor 1): orthogonal only — up / down / left / right by 1.
+ * Factor 2 abilities may override this per unit (do not invent overrides here).
+ */
 export const MOVE_RANGE = 1;
+/** Base attack range — confirm with design before changing shape (ortho vs 8-dir). */
 export const ATTACK_RANGE = 1;
 
 export interface BoardPos {
@@ -54,7 +58,12 @@ export interface MatchState {
   pieces: MatchPiece[];
   players: [MatchPlayerSetup, MatchPlayerSetup];
   currentPlayer: PlayerId;
-  /** Round starts at 1; increments after Player 2 ends turn. */
+  /** Who was randomly chosen to move first this match. */
+  startingPlayer: PlayerId;
+  /**
+   * Turn number (UI: «Ход N»), starts at 1.
+   * Increments when play returns to startingPlayer.
+   */
   round: number;
   selectedPieceId: string | null;
   phase: MatchPhase;

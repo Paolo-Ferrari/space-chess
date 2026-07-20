@@ -9,7 +9,7 @@ export const PLAY_MODES_CATALOG: readonly PlayModeDefinition[] = [
     id: "classic",
     label: "Классический",
     blurb:
-      "Пошаговый матч 16×16 на сохранённых армиях. Выберите онлайн или оффлайн.",
+      "Пошаговый матч 8×8. Онлайн (позже) или локальная игра в двух окнах.",
     atmosphere: "classic",
   },
   {

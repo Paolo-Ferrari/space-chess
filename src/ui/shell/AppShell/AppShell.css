@@ -1,11 +1,11 @@
 .app-shell {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: 56px minmax(0, 1fr);
   width: 100vw;
   height: 100vh;
   background:
-    radial-gradient(ellipse at top, rgba(0, 60, 90, 0.25), transparent 55%),
-    var(--bg-primary);
+    linear-gradient(180deg, rgba(252, 238, 10, 0.03), transparent 30%),
+    var(--bg-deep);
   color: var(--text-main);
   overflow: hidden;
 }
@@ -15,81 +15,73 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  min-height: 56px;
-  padding: 0 20px;
-  border-bottom: 1px solid var(--glass-border);
-  background: rgba(4, 12, 22, 0.88);
-  box-shadow: 0 0 24px var(--glow-soft);
+  padding: 0 18px;
+  border-bottom: 1px solid rgba(252, 238, 10, 0.28);
+  background:
+    linear-gradient(90deg, rgba(255, 42, 109, 0.12), transparent 45%),
+    rgba(12, 10, 14, 0.95);
 }
 
 .app-shell-header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   min-width: 0;
 }
 
 .app-shell-brand {
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--accent-neon);
-  text-shadow: 0 0 10px var(--glow-soft);
+  color: var(--cp-yellow);
   white-space: nowrap;
 }
 
 .app-shell-title {
   margin: 0;
-  font-size: 15px;
+  font-family: var(--font-display);
+  font-size: 14px;
   font-weight: 700;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .app-shell-back {
-  height: 30px;
-  padding: 0 12px;
-  border: 1px solid var(--glass-border);
-  background: rgba(0, 30, 45, 0.7);
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid rgba(252, 238, 10, 0.35);
+  background: rgba(252, 238, 10, 0.06);
   color: var(--text-main);
-  font-size: 12px;
-  letter-spacing: 0.06em;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   cursor: pointer;
+  clip-path: var(--clip-btn);
+  flex-shrink: 0;
 }
 
 .app-shell-back:hover {
-  border-color: var(--energy);
-  color: var(--accent-neon);
+  border-color: var(--cp-yellow);
+  color: var(--cp-yellow);
+  box-shadow: 0 0 16px var(--glow-soft);
 }
 
 .app-shell-actions {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
 }
 
 .app-shell-body {
-  flex: 1;
   min-height: 0;
   overflow: auto;
-}
-
-.app-shell-body:has(.armies-screen) {
-  overflow: hidden;
-}
-
-.app-shell-body::-webkit-scrollbar {
-  width: 8px;
-}
-
-.app-shell-body::-webkit-scrollbar-thumb {
-  background: var(--accent-dim);
-}
-
-.app-shell-body::-webkit-scrollbar-track {
-  background: transparent;
+  padding: 20px;
 }

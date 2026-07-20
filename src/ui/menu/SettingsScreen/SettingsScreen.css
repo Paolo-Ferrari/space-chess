@@ -4,10 +4,21 @@
   padding: 28px 24px;
   color: var(--text-main);
   line-height: 1.5;
+  font-family: var(--font-body);
+  font-weight: 600;
+  border: 1px solid var(--glass-border);
+  background:
+    linear-gradient(160deg, rgba(252, 238, 10, 0.05), transparent 50%),
+    var(--bg-panel);
+  box-shadow:
+    0 0 0 1px rgba(255, 42, 109, 0.1),
+    0 0 28px var(--glow-soft);
+  clip-path: var(--clip-panel);
 }
 
 .settings-note {
   color: var(--text-muted);
   font-size: 13px;
   letter-spacing: 0.04em;
+  font-family: var(--font-mono);
 }

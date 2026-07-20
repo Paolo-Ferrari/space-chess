@@ -4,7 +4,7 @@ import type { UnitDefinition } from "../unit/unit.types";
 import type { MatchPiece, PlayerId } from "./match.types";
 
 /**
- * Victory = all mandatory commanders (kings) of the opponent are destroyed.
+ * Basic win rule: destroy all enemy kings (commanders).
  * Cosmodesant has two kings — both must fall.
  * Plutons has one king.
  */

@@ -1,0 +1,102 @@
+.local-host {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px 8px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.local-host-lead {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text-main);
+  font-family: var(--font-body);
+  font-weight: 600;
+}
+
+.local-host-warn {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 42, 109, 0.5);
+  background: rgba(40, 6, 16, 0.65);
+  color: #ff8aad;
+  font-size: 13px;
+  line-height: 1.45;
+  clip-path: var(--clip-panel);
+  box-shadow: 0 0 18px rgba(255, 42, 109, 0.15);
+}
+
+.local-host-links {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.local-host-link {
+  display: grid;
+  place-items: center;
+  height: 44px;
+  border: 1px solid rgba(0, 240, 255, 0.45);
+  background: rgba(0, 36, 40, 0.75);
+  color: var(--cp-cyan);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  clip-path: var(--clip-btn);
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s,
+    color 0.15s,
+    background 0.15s;
+}
+
+.local-host-link:hover {
+  border-color: var(--cp-cyan);
+  color: var(--cp-cyan);
+  background: rgba(0, 240, 255, 0.1);
+  box-shadow: 0 0 14px rgba(0, 240, 255, 0.25);
+}
+
+.local-host-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.local-host-btn {
+  height: 42px;
+  padding: 0 18px;
+  border: 1px solid rgba(252, 238, 10, 0.35);
+  background: rgba(252, 238, 10, 0.04);
+  color: var(--text-main);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  clip-path: var(--clip-btn);
+  transition:
+    border-color 0.15s,
+    color 0.15s,
+    background 0.15s,
+    box-shadow 0.15s;
+}
+
+.local-host-btn.primary {
+  border-color: var(--cp-yellow);
+  color: var(--cp-yellow);
+  background: rgba(252, 238, 10, 0.12);
+}
+
+.local-host-btn:hover {
+  border-color: var(--cp-yellow);
+  color: var(--cp-yellow);
+  background: rgba(252, 238, 10, 0.12);
+  box-shadow: 0 0 14px var(--glow-soft);
+}

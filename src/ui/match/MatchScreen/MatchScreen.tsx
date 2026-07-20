@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 
 import { getPieceGlyph } from "../../../data/catalog/pieceGlyphs.catalog";
 import {
@@ -11,30 +11,25 @@ import {
   boardRankLabels,
   cellLabel,
 } from "../../../domain/match/boardCoords";
-import type {
-  BoardPos,
-  MatchConfig,
-  MatchState,
-} from "../../../domain/match/match.types";
+import {
+  displayFileLabels,
+  displayRankLabels,
+  displayToLogical,
+} from "../../../domain/match/boardView";
+import type { PlayerId } from "../../../domain/match/match.types";
+import { livingKingsForPlayer } from "../../../domain/match/victory";
 import {
   getHeroById,
   getUnitById,
 } from "../../../services/collection/collectionService";
 import {
-  acknowledgeHandoff,
-  attackPiece,
   canUseAbility,
-  clearSelection,
-  createMatch,
   describePiece,
-  endTurn,
   getLegalAttacks,
   getLegalMoves,
   getSelectedPiece,
-  movePiece,
-  selectPiece,
-  useAbility,
 } from "../../../services/match/matchEngine";
+import type { MatchSessionSource } from "../../../services/match/session/matchSession.types";
 import UnitCard from "../../collection/UnitCard/UnitCard";
 import NeonPortrait from "../../shared/NeonPortrait/NeonPortrait";
 
@@ -43,46 +38,92 @@ import "./MatchScreen.css";
 type AimMode = "none" | "heal" | "teleport";
 
 interface MatchScreenProps {
-  config: MatchConfig;
+  session: MatchSessionSource;
+  /** Whose perspective this window uses (army always at bottom). */
+  seat: PlayerId;
   onMenu: () => void;
-  onRematch: () => void;
+  /** Player 1 tab: URL of the Player 2 tab (for reopen link). */
+  playerTwoUrl?: string | null;
+  /** Player 1 tab: second tab did not open (popup/tab blocked). */
+  playerTwoNeedsOpen?: boolean;
+  onOpenPlayerTwo?: () => void;
 }
 
-function MatchScreen({ config, onMenu, onRematch }: MatchScreenProps) {
-  const [state, setState] = useState<MatchState>(() => createMatch(config));
+function MaskIcon() {
+  return (
+    <svg
+      className="match-mask-icon"
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      aria-hidden
+    >
+      <path
+        fill="currentColor"
+        d="M12 2c-3.8 0-7 2.4-7 6.2V10c0 4.2 2.6 7.8 7 9.8 4.4-2 7-5.6 7-9.8V8.2C19 4.4 15.8 2 12 2zm-3.2 9.2c-.9 0-1.6-.7-1.6-1.6S7.9 8 8.8 8s1.6.7 1.6 1.6-.7 1.6-1.6 1.6zm6.4 0c-.9 0-1.6-.7-1.6-1.6S14.3 8 15.2 8s1.6.7 1.6 1.6-.7 1.6-1.6 1.6zM8.5 14.2c.9 1.2 2.1 1.9 3.5 1.9s2.6-.7 3.5-1.9c.2-.2.1-.5-.1-.6-.2-.1-.5 0-.6.2-.7.9-1.7 1.4-2.8 1.4s-2.1-.5-2.8-1.4c-.1-.2-.4-.3-.6-.2-.2.1-.3.4-.1.6z"
+      />
+    </svg>
+  );
+}
+
+function MatchScreen({
+  session,
+  seat,
+  onMenu,
+  playerTwoUrl = null,
+  playerTwoNeedsOpen = false,
+  onOpenPlayerTwo,
+}: MatchScreenProps) {
+  const [snapshot, setSnapshot] = useState(() => session.getSnapshot());
   const [aimMode, setAimMode] = useState<AimMode>("none");
   const [hoveredPieceId, setHoveredPieceId] = useState<string | null>(null);
+  const [boardHidden, setBoardHidden] = useState(false);
 
+  useEffect(() => session.subscribe(setSnapshot), [session]);
+
+  useEffect(() => {
+    const name = snapshot.state.players[seat].displayName;
+    document.title = `Space Chess · ${name}`;
+    return () => {
+      document.title = "Space Chess";
+    };
+  }, [seat, snapshot.state.players]);
+
+  const state = snapshot.state;
+  const dualWindow = snapshot.dualWindow;
   const selected = getSelectedPiece(state);
   const selectedInfo = selected ? describePiece(selected) : null;
 
+  const isMyTurn =
+    state.phase === "playing" && state.currentPlayer === seat;
+
   const legalMoves = useMemo(() => {
-    if (!selected || aimMode !== "none") {
-      return [] as BoardPos[];
+    if (!selected || aimMode !== "none" || !isMyTurn) {
+      return [];
     }
     return getLegalMoves(state, selected);
-  }, [aimMode, selected, state]);
+  }, [aimMode, isMyTurn, selected, state]);
 
   const legalAttacks = useMemo(() => {
-    if (!selected || aimMode !== "none") {
+    if (!selected || aimMode !== "none" || !isMyTurn) {
       return [];
     }
     return getLegalAttacks(state, selected);
-  }, [aimMode, selected, state]);
+  }, [aimMode, isMyTurn, selected, state]);
 
   const healTargets = useMemo(() => {
-    if (!selected || aimMode !== "heal") {
+    if (!selected || aimMode !== "heal" || !isMyTurn) {
       return [];
     }
     return getHealTargets(state.pieces, selected);
-  }, [aimMode, selected, state.pieces]);
+  }, [aimMode, isMyTurn, selected, state.pieces]);
 
   const teleportTargets = useMemo(() => {
-    if (!selected || aimMode !== "teleport") {
-      return [] as BoardPos[];
+    if (!selected || aimMode !== "teleport" || !isMyTurn) {
+      return [];
     }
     return getTeleportTargets(state, selected);
-  }, [aimMode, selected, state]);
+  }, [aimMode, isMyTurn, selected, state]);
 
   const moveKeys = useMemo(
     () => new Set(legalMoves.map((pos) => `${pos.x},${pos.y}`)),
@@ -102,17 +143,33 @@ function MatchScreen({ config, onMenu, onRematch }: MatchScreenProps) {
   );
 
   const currentName = state.players[state.currentPlayer].displayName;
+  const seatName = state.players[seat].displayName;
+  const myKings = livingKingsForPlayer(state.pieces, seat, getUnitById).length;
+  const enemySeat: PlayerId = seat === 0 ? 1 : 0;
+  const enemyKings = livingKingsForPlayer(
+    state.pieces,
+    enemySeat,
+    getUnitById,
+  ).length;
   const abilityReady = Boolean(
     selected && canUseAbility(state, selected, getUnitById),
   );
 
-  const fileLabels = useMemo(
+  const fileLabelsBase = useMemo(
     () => boardFileLabels(state.boardSize),
     [state.boardSize],
   );
-  const rankLabels = useMemo(
+  const rankLabelsBase = useMemo(
     () => boardRankLabels(state.boardSize),
     [state.boardSize],
+  );
+  const fileLabels = useMemo(
+    () => displayFileLabels(seat, state.boardSize, fileLabelsBase),
+    [fileLabelsBase, seat, state.boardSize],
+  );
+  const rankLabels = useMemo(
+    () => displayRankLabels(seat, state.boardSize, rankLabelsBase),
+    [rankLabelsBase, seat, state.boardSize],
   );
 
   const hoveredPiece = hoveredPieceId
@@ -135,24 +192,32 @@ function MatchScreen({ config, onMenu, onRematch }: MatchScreenProps) {
       (piece) => piece.x === x && piece.y === y,
     );
 
+    if (!isMyTurn) {
+      if (occupant) {
+        session.dispatch({ type: "inspectPiece", pieceId: occupant.id });
+      } else {
+        session.dispatch({ type: "clearSelection" });
+      }
+      setAimMode("none");
+      return;
+    }
+
     if (aimMode === "teleport" && selected && teleportKeys.has(key)) {
-      setState((current) =>
-        useAbility(current, selected.id, {
-          type: "teleport",
-          to: { x, y },
-        }),
-      );
+      session.dispatch({
+        type: "useAbility",
+        pieceId: selected.id,
+        target: { type: "teleport", to: { x, y } },
+      });
       setAimMode("none");
       return;
     }
 
     if (aimMode === "heal" && selected && occupant && healKeys.has(key)) {
-      setState((current) =>
-        useAbility(current, selected.id, {
-          type: "heal",
-          targetPieceId: occupant.id,
-        }),
-      );
+      session.dispatch({
+        type: "useAbility",
+        pieceId: selected.id,
+        target: { type: "heal", targetPieceId: occupant.id },
+      });
       setAimMode("none");
       return;
     }
@@ -163,37 +228,41 @@ function MatchScreen({ config, onMenu, onRematch }: MatchScreenProps) {
     }
 
     if (selected && moveKeys.has(key) && !occupant) {
-      setState((current) => movePiece(current, selected.id, { x, y }));
+      session.dispatch({
+        type: "movePiece",
+        pieceId: selected.id,
+        to: { x, y },
+      });
       return;
     }
 
     if (selected && occupant && attackKeys.has(key)) {
-      setState((current) => attackPiece(current, selected.id, occupant.id));
+      session.dispatch({
+        type: "attackPiece",
+        attackerId: selected.id,
+        targetId: occupant.id,
+      });
       return;
     }
 
-    if (occupant && occupant.owner === state.currentPlayer) {
-      setState((current) => selectPiece(current, occupant.id));
+    if (occupant && occupant.owner === seat) {
+      session.dispatch({ type: "selectPiece", pieceId: occupant.id });
       setAimMode("none");
       return;
     }
 
-    if (occupant && occupant.owner !== state.currentPlayer) {
-      // Inspect enemy: select for left panel read-only via temporary select only if own turn? Show info by selecting visually without ownership actions.
-      setState((current) => ({
-        ...current,
-        selectedPieceId: occupant.id,
-      }));
+    if (occupant) {
+      session.dispatch({ type: "inspectPiece", pieceId: occupant.id });
       setAimMode("none");
       return;
     }
 
-    setState((current) => clearSelection(current));
+    session.dispatch({ type: "clearSelection" });
     setAimMode("none");
   };
 
   const handleAbilityClick = () => {
-    if (!selected || !abilityReady) {
+    if (!selected || !abilityReady || !isMyTurn) {
       return;
     }
     const def = getUnitById(selected.unitDefinitionId);
@@ -208,12 +277,30 @@ function MatchScreen({ config, onMenu, onRematch }: MatchScreenProps) {
   };
 
   const handleEndTurn = () => {
+    if (!isMyTurn) {
+      return;
+    }
     setAimMode("none");
-    setState((current) => endTurn(current));
+    session.dispatch({ type: "endTurn" });
+  };
+
+  const handleSurrender = () => {
+    if (state.phase === "ended") {
+      return;
+    }
+    if (
+      !window.confirm(
+        `Сдаться за ${seatName}? Победит соперник.`,
+      )
+    ) {
+      return;
+    }
+    setAimMode("none");
+    session.dispatch({ type: "surrender", seat });
   };
 
   const handleHandoff = () => {
-    setState((current) => acknowledgeHandoff(current));
+    session.dispatch({ type: "acknowledgeHandoff" });
   };
 
   const winnerName =
@@ -221,21 +308,80 @@ function MatchScreen({ config, onMenu, onRematch }: MatchScreenProps) {
 
   return (
     <div className="match-screen">
+      {playerTwoNeedsOpen && (
+        <div className="match-tab-banner" role="status">
+          <span>
+            Вкладка «Игрок 2» не открылась. Разрешите всплывающие окна и
+            откройте её — там играет второй игрок своей армией.
+          </span>
+          <div className="match-tab-banner-actions">
+            {onOpenPlayerTwo && (
+              <button
+                type="button"
+                className="match-btn primary"
+                onClick={onOpenPlayerTwo}
+              >
+                Открыть вкладку Игрок 2
+              </button>
+            )}
+            {playerTwoUrl && (
+              <a
+                className="match-btn"
+                href={playerTwoUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Ссылка на Игрока 2
+              </a>
+            )}
+          </div>
+        </div>
+      )}
+
       <header className="match-top">
         <div className="match-top-meta">
-          <span className="match-top-player">
-            Ход: {currentName}
+          <span className={`match-top-seat-badge seat-${seat}`}>
+            {seatName}
           </span>
-          <span className="match-top-round">Раунд {state.round}</span>
+          <span className="match-top-player">Ходит: {currentName}</span>
+          <span className="match-top-round">Ход {state.round}</span>
+          <span className="match-top-kings" title="Живые короли">
+            Короли: свои {myKings} · враг {enemyKings}
+          </span>
+          {!isMyTurn && state.phase === "playing" && (
+            <span className="match-top-wait">Ожидание хода соперника</span>
+          )}
+          {isMyTurn && state.phase === "playing" && (
+            <span className="match-top-ready">Ваш ход</span>
+          )}
         </div>
         <div className="match-top-actions">
           <button
             type="button"
-            className="match-btn"
-            disabled={state.phase !== "playing"}
-            onClick={handleEndTurn}
+            className={`match-btn match-btn-icon${boardHidden ? " is-active" : ""}`}
+            onClick={() => setBoardHidden((value) => !value)}
+            title={boardHidden ? "Показать поле" : "Скрыть поле"}
+            aria-pressed={boardHidden}
           >
-            Завершить ход
+            <MaskIcon />
+            <span>{boardHidden ? "Показать поле" : "Скрыть поле"}</span>
+          </button>
+          <button
+            type="button"
+            className="match-btn"
+            disabled={!isMyTurn}
+            onClick={handleEndTurn}
+            title="Передать ход без действия фигурой"
+          >
+            Пропустить ход
+          </button>
+          <button
+            type="button"
+            className="match-btn match-btn-danger"
+            disabled={state.phase === "ended"}
+            onClick={handleSurrender}
+          >
+            Сдаться
           </button>
           <button type="button" className="match-btn" onClick={onMenu}>
             Меню
@@ -271,7 +417,7 @@ function MatchScreen({ config, onMenu, onRematch }: MatchScreenProps) {
             <p className="match-unit-ability">
               {selectedInfo.def.abilityDescription}
             </p>
-            {selected.owner !== state.currentPlayer && (
+            {selected.owner !== seat && (
               <p className="match-muted">Чужая фигура — только просмотр.</p>
             )}
           </div>
@@ -279,96 +425,108 @@ function MatchScreen({ config, onMenu, onRematch }: MatchScreenProps) {
       </aside>
 
       <main className="match-board-wrap">
-        <div
-          className="match-board-frame"
-          style={{
-            gridTemplateColumns: `28px repeat(${state.boardSize}, minmax(0, 1fr))`,
-            gridTemplateRows: `repeat(${state.boardSize}, minmax(0, 1fr)) 22px`,
-          }}
-        >
-          {Array.from({ length: state.boardSize }, (_, rowIndex) => {
-            const y = state.boardSize - 1 - rowIndex;
-            return (
-              <Fragment key={`row-${y}`}>
-                <div className="match-board-rank">{rankLabels[y]}</div>
-                {fileLabels.map((_, x) => {
-                  const key = `${x},${y}`;
-                  const piece = state.pieces.find(
-                    (item) => item.x === x && item.y === y,
-                  );
-                  const def = piece
-                    ? getUnitById(piece.unitDefinitionId)
-                    : null;
-                  const isSelected = piece?.id === state.selectedPieceId;
-                  const classes = [
-                    "match-cell",
-                    moveKeys.has(key) ? "is-move" : "",
-                    attackKeys.has(key) ? "is-attack" : "",
-                    healKeys.has(key) ? "is-heal" : "",
-                    teleportKeys.has(key) ? "is-teleport" : "",
-                    isSelected ? "is-selected" : "",
-                    piece ? `owner-${piece.owner}` : "",
-                  ]
-                    .filter(Boolean)
-                    .join(" ");
-
-                  return (
-                    <button
-                      key={key}
-                      type="button"
-                      className={classes}
-                      onClick={() => handleCellClick(x, y)}
-                      onMouseEnter={() => {
-                        if (piece) {
-                          setHoveredPieceId(piece.id);
-                        }
-                      }}
-                      onMouseLeave={() => {
-                        setHoveredPieceId((current) =>
-                          current === piece?.id ? null : current,
-                        );
-                      }}
-                      title={cellLabel(x, y)}
-                    >
-                      {piece && def && (
-                        <span className="match-token">
-                          <span className="match-token-glyph">
-                            {getPieceGlyph(piece.unitDefinitionId)}
-                          </span>
-                          <span className="match-token-stats">
-                            <span className="match-token-atk" title="Атака">
-                              {def.attack}
-                            </span>
-                            <span className="match-token-hp" title="Здоровье">
-                              {piece.health}
-                            </span>
-                          </span>
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </Fragment>
-            );
-          })}
-
-          <div className="match-board-corner" />
-          {fileLabels.map((file) => (
-            <div key={`file-${file}`} className="match-board-file">
-              {file}
-            </div>
-          ))}
-        </div>
-
-        {hoveredPiece && hoveredDef && (
-          <div className="match-hover-card">
-            <UnitCard
-              unit={hoveredDef}
-              hero={hoveredHero}
-              preview
-              healthOverride={hoveredPiece.health}
-            />
+        {boardHidden ? (
+          <div className="match-board-hidden" role="status">
+            <MaskIcon />
+            <p>Поле скрыто</p>
           </div>
+        ) : (
+          <>
+            <div
+              className="match-board-frame"
+              style={{
+                gridTemplateColumns: `28px repeat(${state.boardSize}, minmax(0, 1fr))`,
+                gridTemplateRows: `repeat(${state.boardSize}, minmax(0, 1fr)) 22px`,
+              }}
+            >
+              {Array.from({ length: state.boardSize }, (_, rowIndex) => (
+                <Fragment key={`row-${rowIndex}`}>
+                  <div className="match-board-rank">{rankLabels[rowIndex]}</div>
+                  {Array.from({ length: state.boardSize }, (_, colIndex) => {
+                    const { x, y } = displayToLogical(
+                      seat,
+                      state.boardSize,
+                      colIndex,
+                      rowIndex,
+                    );
+                    const key = `${x},${y}`;
+                    const piece = state.pieces.find(
+                      (item) => item.x === x && item.y === y,
+                    );
+                    const def = piece
+                      ? getUnitById(piece.unitDefinitionId)
+                      : null;
+                    const isSelected = piece?.id === state.selectedPieceId;
+                    const classes = [
+                      "match-cell",
+                      moveKeys.has(key) ? "is-move" : "",
+                      attackKeys.has(key) ? "is-attack" : "",
+                      healKeys.has(key) ? "is-heal" : "",
+                      teleportKeys.has(key) ? "is-teleport" : "",
+                      isSelected ? "is-selected" : "",
+                      piece ? `owner-${piece.owner}` : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" ");
+
+                    return (
+                      <button
+                        key={key}
+                        type="button"
+                        className={classes}
+                        onClick={() => handleCellClick(x, y)}
+                        onMouseEnter={() => {
+                          if (piece) {
+                            setHoveredPieceId(piece.id);
+                          }
+                        }}
+                        onMouseLeave={() => {
+                          setHoveredPieceId((current) =>
+                            current === piece?.id ? null : current,
+                          );
+                        }}
+                        title={cellLabel(x, y)}
+                      >
+                        {piece && def && (
+                          <span className="match-token">
+                            <span className="match-token-glyph">
+                              {getPieceGlyph(piece.unitDefinitionId)}
+                            </span>
+                            <span className="match-token-stats">
+                              <span className="match-token-atk" title="Атака">
+                                {def.attack}
+                              </span>
+                              <span className="match-token-hp" title="Здоровье">
+                                {piece.health}
+                              </span>
+                            </span>
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </Fragment>
+              ))}
+
+              <div className="match-board-corner" />
+              {fileLabels.map((file) => (
+                <div key={`file-${file}`} className="match-board-file">
+                  {file}
+                </div>
+              ))}
+            </div>
+
+            {hoveredPiece && hoveredDef && (
+              <div className="match-hover-card">
+                <UnitCard
+                  unit={hoveredDef}
+                  hero={hoveredHero}
+                  preview
+                  healthOverride={hoveredPiece.health}
+                />
+              </div>
+            )}
+          </>
         )}
       </main>
 
@@ -377,7 +535,7 @@ function MatchScreen({ config, onMenu, onRematch }: MatchScreenProps) {
         <ul className="match-log">
           {state.log.map((entry) => (
             <li key={entry.id}>
-              <span className="match-log-round">R{entry.round}</span>
+              <span className="match-log-round">Х{entry.round}</span>
               {entry.text}
             </li>
           ))}
@@ -397,8 +555,8 @@ function MatchScreen({ config, onMenu, onRematch }: MatchScreenProps) {
                 className="match-btn"
                 disabled={
                   !abilityReady ||
-                  selected?.owner !== state.currentPlayer ||
-                  state.phase !== "playing"
+                  selected?.owner !== seat ||
+                  !isMyTurn
                 }
                 onClick={handleAbilityClick}
               >
@@ -424,34 +582,49 @@ function MatchScreen({ config, onMenu, onRematch }: MatchScreenProps) {
           )}
         </div>
         <p className="match-bottom-hint">
-          Свой ход: выбор фигуры → клетка хода / атака. Затем «Завершить ход».
+          Как в шахматах: один ход — одно действие фигурой (перемещение, атака
+          или способность), затем ходит соперник. Базовый ход: ↑ ↓ ← → на 1
+          клетку. Победа: короли врага или сдача.
+          {dualWindow
+            ? " Локально: играйте в своём окне; «Скрыть поле» — при смене места."
+            : ""}
         </p>
       </footer>
 
-      {state.phase === "handoff" && state.handoffPlayer !== null && (
-        <div className="match-overlay">
-          <div className="match-overlay-card">
-            <h2>Передача хода</h2>
-            <p>
-              Ход переходит к{" "}
-              <strong>{state.players[state.handoffPlayer].displayName}</strong>.
-            </p>
-            <button type="button" className="match-btn primary" onClick={handleHandoff}>
-              Продолжить
-            </button>
+      {!dualWindow &&
+        state.phase === "handoff" &&
+        state.handoffPlayer !== null && (
+          <div className="match-overlay">
+            <div className="match-overlay-card">
+              <h2>Передача хода</h2>
+              <p>
+                Ход переходит к{" "}
+                <strong>
+                  {state.players[state.handoffPlayer].displayName}
+                </strong>
+                .
+              </p>
+              <button
+                type="button"
+                className="match-btn primary"
+                onClick={handleHandoff}
+              >
+                Продолжить
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
       {state.phase === "ended" && winnerName && (
         <div className="match-overlay">
           <div className="match-overlay-card">
             <h2>Победил {winnerName}</h2>
+            <p>Все короли противника уничтожены.</p>
             <div className="match-overlay-actions">
               <button
                 type="button"
                 className="match-btn primary"
-                onClick={onRematch}
+                onClick={() => session.dispatch({ type: "rematch" })}
               >
                 Сыграть ещё раз
               </button>

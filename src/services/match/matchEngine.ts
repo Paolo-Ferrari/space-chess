@@ -45,6 +45,7 @@ function withWinnerCheck(state: MatchState): MatchState {
   if (winner === null) {
     return state;
   }
+  const loser: PlayerId = winner === 0 ? 1 : 0;
   return {
     ...state,
     phase: "ended",
@@ -53,9 +54,13 @@ function withWinnerCheck(state: MatchState): MatchState {
     handoffPlayer: null,
     log: pushLog(
       state,
-      `Победа: ${state.players[winner].displayName}.`,
+      `Победа: ${state.players[winner].displayName} — уничтожены все короли (${state.players[loser].displayName}).`,
     ),
   };
+}
+
+function pickStartingPlayer(): PlayerId {
+  return Math.random() < 0.5 ? 0 : 1;
 }
 
 function createPiece(
@@ -105,11 +110,14 @@ export function createMatch(config: MatchConfig): MatchState {
     });
   });
 
+  const startingPlayer = pickStartingPlayer();
+
   const state: MatchState = {
     boardSize: BOARD_SIZE,
     pieces,
     players: config.players,
-    currentPlayer: 0,
+    currentPlayer: startingPlayer,
+    startingPlayer,
     round: 1,
     selectedPieceId: null,
     phase: "playing",
@@ -122,7 +130,7 @@ export function createMatch(config: MatchConfig): MatchState {
     ...state,
     log: pushLog(
       state,
-      `Матч начат. Раунд 1 — ход ${config.players[0].displayName}.`,
+      `Матч начат. Первым ходит (случайно): ${config.players[startingPlayer].displayName}. Цель — уничтожить всех королей противника.`,
     ),
   };
 }
@@ -227,8 +235,11 @@ export function attackPiece(
     nextPieces = nextPieces.filter((item) => item.id !== targetId);
   }
 
+  const wasKing = Boolean(targetDef && isKingUnit(targetDef));
   const killNote = killed
-    ? ` ${targetDef?.name ?? "Цель"} уничтожен.`
+    ? wasKing
+      ? ` Король ${targetDef?.name ?? ""} уничтожен.`
+      : ` ${targetDef?.name ?? "Цель"} уничтожен.`
     : ` Осталось HP: ${Math.max(0, nextHealth)}.`;
 
   const next: MatchState = {
@@ -320,9 +331,10 @@ export function endTurn(state: MatchState): MatchState {
     return state;
   }
 
+  const startingPlayer: PlayerId = state.startingPlayer ?? 0;
   const nextPlayer: PlayerId = state.currentPlayer === 0 ? 1 : 0;
   const nextRound =
-    state.currentPlayer === 1 ? state.round + 1 : state.round;
+    nextPlayer === startingPlayer ? state.round + 1 : state.round;
 
   const cooled = state.pieces.map((piece) => {
     const teleportCooldown =
@@ -339,20 +351,21 @@ export function endTurn(state: MatchState): MatchState {
     };
   });
 
+  const turnLine =
+    nextPlayer === startingPlayer
+      ? `Ход ${nextRound}. Ходит ${state.players[nextPlayer].displayName}.`
+      : `Ходит ${state.players[nextPlayer].displayName}.`;
+
   const base: MatchState = {
     ...state,
+    startingPlayer,
     pieces: cooled,
     currentPlayer: nextPlayer,
     round: nextRound,
     selectedPieceId: null,
     phase: "handoff",
     handoffPlayer: nextPlayer,
-    log: pushLog(
-      state,
-      nextPlayer === 0
-        ? `Раунд ${nextRound}. Ход ${state.players[0].displayName}.`
-        : `Ход ${state.players[1].displayName}.`,
-    ),
+    log: pushLog(state, turnLine),
   };
 
   return base;
@@ -366,6 +379,28 @@ export function acknowledgeHandoff(state: MatchState): MatchState {
     ...state,
     phase: "playing",
     handoffPlayer: null,
+  };
+}
+
+/** Player resigns — opponent wins. Match ends immediately. */
+export function surrenderMatch(
+  state: MatchState,
+  seat: PlayerId,
+): MatchState {
+  if (state.phase === "ended") {
+    return state;
+  }
+  const winner: PlayerId = seat === 0 ? 1 : 0;
+  return {
+    ...state,
+    phase: "ended",
+    winner,
+    selectedPieceId: null,
+    handoffPlayer: null,
+    log: pushLog(
+      state,
+      `${state.players[seat].displayName} сдался. Победа: ${state.players[winner].displayName}.`,
+    ),
   };
 }
 

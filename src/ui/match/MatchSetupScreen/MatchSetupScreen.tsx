@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import type { Army } from "../../../domain/army/army.types";
 import type { MatchConfig, MatchPlayerSetup } from "../../../domain/match/match.types";
@@ -43,18 +43,51 @@ function buildSeat(
 
 function MatchSetupScreen({ onBack, onStart }: MatchSetupScreenProps) {
   const collection = useMemo(() => getCollection(), []);
-  const armies = useMemo(() => listArmies(), []);
   const defaultHeroId = collection.heroes[0]?.id ?? "";
 
-  const [seat0, setSeat0] = useState<SeatDraft>({
-    heroId: defaultHeroId,
-    armyId: null,
+  const [armies, setArmies] = useState<Army[]>(() => listArmies());
+  const [seat0, setSeat0] = useState<SeatDraft>(() => {
+    const stored = listArmies();
+    const heroId = defaultHeroId;
+    return {
+      heroId,
+      armyId: stored.find((army) => army.heroId === heroId)?.id ?? null,
+    };
   });
-  const [seat1, setSeat1] = useState<SeatDraft>({
-    heroId: collection.heroes[1]?.id ?? defaultHeroId,
-    armyId: null,
+  const [seat1, setSeat1] = useState<SeatDraft>(() => {
+    const stored = listArmies();
+    const heroId = collection.heroes[1]?.id ?? defaultHeroId;
+    return {
+      heroId,
+      armyId: stored.find((army) => army.heroId === heroId)?.id ?? null,
+    };
   });
   const [error, setError] = useState("");
+
+  // Re-read armies every time this screen opens (after editing in «Армии»).
+  useEffect(() => {
+    const stored = listArmies();
+    setArmies(stored);
+
+    const resolveArmyId = (heroId: string, armyId: string | null) => {
+      if (
+        armyId &&
+        stored.some((army) => army.id === armyId && army.heroId === heroId)
+      ) {
+        return armyId;
+      }
+      return stored.find((army) => army.heroId === heroId)?.id ?? null;
+    };
+
+    setSeat0((current) => ({
+      ...current,
+      armyId: resolveArmyId(current.heroId, current.armyId),
+    }));
+    setSeat1((current) => ({
+      ...current,
+      armyId: resolveArmyId(current.heroId, current.armyId),
+    }));
+  }, []);
 
   const armiesFor = (heroId: string) =>
     armies.filter((army) => army.heroId === heroId);
@@ -65,8 +98,10 @@ function MatchSetupScreen({ onBack, onStart }: MatchSetupScreenProps) {
   );
 
   const handleStart = () => {
-    const player0 = buildSeat(seat0, armies, "Игрок 1");
-    const player1 = buildSeat(seat1, armies, "Игрок 2");
+    const fresh = listArmies();
+    setArmies(fresh);
+    const player0 = buildSeat(seat0, fresh, "Игрок 1");
+    const player1 = buildSeat(seat1, fresh, "Игрок 2");
     if (!player0 || !player1) {
       setError("Каждому игроку нужны герой и сохранённая армия.");
       return;
@@ -101,7 +136,10 @@ function MatchSetupScreen({ onBack, onStart }: MatchSetupScreenProps) {
             value={draft.heroId}
             onChange={(event) => {
               const heroId = event.target.value;
-              setDraft({ heroId, armyId: null });
+              const firstArmy =
+                listArmies().find((army) => army.heroId === heroId)?.id ?? null;
+              setDraft({ heroId, armyId: firstArmy });
+              setArmies(listArmies());
               setError("");
             }}
           >
@@ -149,11 +187,11 @@ function MatchSetupScreen({ onBack, onStart }: MatchSetupScreenProps) {
   };
 
   return (
-    <AppShell title="Классический · Оффлайн" onBack={onBack}>
+    <AppShell title="Классический · Локальная (2 окна)" onBack={onBack}>
       <div className="match-setup">
         <p className="match-setup-lead">
-          Оффлайн: два игрока ходят по очереди, как в шахматах. Выберите героя
-          и сохранённую армию для каждого, затем начните партию.
+          После старта: эта вкладка — Игрок 1 (ваша армия), вторая вкладка —
+          Игрок 2 (его армия). Ходы по очереди, партия общая.
         </p>
 
         <div className="match-setup-grid">

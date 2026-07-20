@@ -12,6 +12,21 @@ export function chebyshev(a: BoardPos, b: BoardPos): number {
   return Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y));
 }
 
+/** Orthogonal (up/down/left/right) distance. */
+export function manhattan(a: BoardPos, b: BoardPos): number {
+  return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+}
+
+/** Four orthogonal neighbours at distance 1. */
+export function orthogonalSteps(): readonly BoardPos[] {
+  return [
+    { x: 0, y: 1 },
+    { x: 0, y: -1 },
+    { x: 1, y: 0 },
+    { x: -1, y: 0 },
+  ];
+}
+
 export function pieceAt(
   pieces: readonly MatchPiece[],
   pos: BoardPos,
@@ -23,12 +38,9 @@ export function cellKey(pos: BoardPos): string {
   return `${pos.x},${pos.y}`;
 }
 
-/** First spawn file is the 4th cell (1-based), i.e. index 3 → file `d`. */
-export const SPAWN_START_X = 3;
-
 /**
  * Auto spawn: Player 0 on bottom rows, Player 1 on top rows.
- * Units fill left→right starting from the 4th cell, front row first.
+ * Front row first, then back row, then deeper toward the center if needed.
  */
 export function spawnSlotsForPlayer(
   count: number,
@@ -39,14 +51,23 @@ export function spawnSlotsForPlayer(
     return [];
   }
 
-  const frontY = owner === 0 ? 1 : size - 2;
-  const backY = owner === 0 ? 0 : size - 1;
-  const rows = [frontY, backY];
+  const rows: number[] = [];
+  if (owner === 0) {
+    rows.push(1, 0);
+    for (let y = 2; y < Math.floor(size / 2); y += 1) {
+      rows.push(y);
+    }
+  } else {
+    rows.push(size - 2, size - 1);
+    for (let y = size - 3; y >= Math.ceil(size / 2); y -= 1) {
+      rows.push(y);
+    }
+  }
+
   const positions: BoardPos[] = [];
-  const startX = Math.min(SPAWN_START_X, size - 1);
 
   for (const y of rows) {
-    for (let x = startX; x < size && positions.length < count; x += 1) {
+    for (let x = 0; x < size && positions.length < count; x += 1) {
       positions.push({ x, y });
     }
   }

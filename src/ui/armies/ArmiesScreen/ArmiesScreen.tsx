@@ -49,14 +49,34 @@ function ArmiesScreen({ onBack }: ArmiesScreenProps) {
   const defaultHeroId = collection.heroes[0]?.id ?? "";
 
   const [armies, setArmies] = useState<Army[]>(() => listArmies());
-  const [selectedArmyId, setSelectedArmyId] = useState<string | null>(
-    () => listArmies()[0]?.id ?? null,
-  );
-  const [draftName, setDraftName] = useState("");
-  const [draftHeroId, setDraftHeroId] = useState(defaultHeroId);
-  const [draftSlots, setDraftSlots] = useState<Array<string | null>>(
-    () => Array.from({ length: ARMY_MAX_UNITS }, () => null),
-  );
+  const [viewHeroId, setViewHeroId] = useState(() => {
+    const stored = listArmies();
+    return stored[0]?.heroId ?? defaultHeroId;
+  });
+  const [selectedArmyId, setSelectedArmyId] = useState<string | null>(() => {
+    const stored = listArmies();
+    const heroId = stored[0]?.heroId ?? defaultHeroId;
+    return stored.find((army) => army.heroId === heroId)?.id ?? null;
+  });
+  const [draftName, setDraftName] = useState(() => {
+    const stored = listArmies();
+    const heroId = stored[0]?.heroId ?? defaultHeroId;
+    return stored.find((army) => army.heroId === heroId)?.name ?? "";
+  });
+  const [draftSlots, setDraftSlots] = useState<Array<string | null>>(() => {
+    const stored = listArmies();
+    const heroId = stored[0]?.heroId ?? defaultHeroId;
+    const army = stored.find((item) => item.heroId === heroId) ?? null;
+    if (!army) {
+      return Array.from({ length: ARMY_MAX_UNITS }, () => null);
+    }
+    return ensureHeroKingInSlots(
+      armyToSlots(army),
+      army.heroId,
+      getUnitById,
+      getKingUnitIdsForHero,
+    );
+  });
   const [dirty, setDirty] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
   const [openedUnitId, setOpenedUnitId] = useState<string | null>(null);
@@ -66,6 +86,8 @@ function ArmiesScreen({ onBack }: ArmiesScreenProps) {
   const heroPickerRef = useRef<HTMLDivElement | null>(null);
 
   const selectedArmy = armies.find((army) => army.id === selectedArmyId) ?? null;
+  /** Faction of the open list / editor — each hero has its own army list. */
+  const draftHeroId = viewHeroId;
 
   useEffect(() => {
     if (!heroPickerOpen) {
@@ -86,14 +108,12 @@ function ArmiesScreen({ onBack }: ArmiesScreenProps) {
   const loadArmyIntoEditor = useCallback((army: Army | null) => {
     if (!army) {
       setDraftName("");
-      setDraftHeroId(defaultHeroId);
       setDraftSlots(Array.from({ length: ARMY_MAX_UNITS }, () => null));
       setDirty(false);
       return;
     }
 
     setDraftName(army.name);
-    setDraftHeroId(army.heroId);
     setDraftSlots(
       ensureHeroKingInSlots(
         armyToSlots(army),
@@ -103,29 +123,105 @@ function ArmiesScreen({ onBack }: ArmiesScreenProps) {
       ),
     );
     setDirty(false);
-  }, [defaultHeroId]);
+  }, []);
 
-  const refreshArmies = useCallback((preferId?: string | null) => {
-    const next = listArmies();
-    setArmies(next);
-    const nextSelected =
-      (preferId && next.find((army) => army.id === preferId)?.id) ||
-      next[0]?.id ||
-      null;
-    setSelectedArmyId(nextSelected);
-    loadArmyIntoEditor(
-      nextSelected
-        ? next.find((army) => army.id === nextSelected) ?? null
-        : null,
+  const refreshArmies = useCallback(
+    (preferId?: string | null, preferHeroId?: string | null) => {
+      const next = listArmies();
+      setArmies(next);
+
+      const heroId =
+        preferHeroId ||
+        (preferId
+          ? (next.find((army) => army.id === preferId)?.heroId ?? viewHeroId)
+          : viewHeroId) ||
+        defaultHeroId;
+
+      setViewHeroId(heroId);
+
+      const heroList = next.filter((army) => army.heroId === heroId);
+      const nextSelected =
+        (preferId && heroList.find((army) => army.id === preferId)?.id) ||
+        heroList[0]?.id ||
+        null;
+
+      setSelectedArmyId(nextSelected);
+      loadArmyIntoEditor(
+        nextSelected
+          ? (next.find((army) => army.id === nextSelected) ?? null)
+          : null,
+      );
+    },
+    [defaultHeroId, loadArmyIntoEditor, viewHeroId],
+  );
+
+  // Always re-read storage when opening the screen (e.g. after Play → Armies).
+  useEffect(() => {
+    refreshArmies(selectedArmyId, viewHeroId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount only
+  }, []);
+
+  const persistDraft = useCallback((): boolean => {
+    if (!selectedArmy || !dirty) {
+      return true;
+    }
+
+    const unitIds = slotsToUnitIds(draftSlots);
+    const cost = sumArmyUnitCost(
+      unitIds,
+      (unitId) => getUnitById(unitId)?.cost,
     );
-  }, [loadArmyIntoEditor]);
+    if (cost > ARMY_BUDGET) {
+      setStatusMessage(
+        `Бюджет превышен: ${cost} / ${ARMY_BUDGET}. Уберите фигуры.`,
+      );
+      return false;
+    }
+
+    const nextName = draftName.trim().slice(0, ARMY_NAME_MAX_LENGTH) || "Армия";
+    const saved = saveArmy({
+      ...selectedArmy,
+      name: nextName,
+      heroId: viewHeroId,
+      unitDefinitionIds: unitIds,
+    });
+    setArmies(listArmies());
+    setSelectedArmyId(saved.id);
+    setDraftName(saved.name);
+    setDraftSlots(
+      ensureHeroKingInSlots(
+        armyToSlots(saved),
+        saved.heroId,
+        getUnitById,
+        getKingUnitIdsForHero,
+      ),
+    );
+    setDirty(false);
+    setStatusMessage("Сохранено.");
+    return true;
+  }, [dirty, draftName, draftSlots, selectedArmy, viewHeroId]);
 
   const selectArmy = (armyId: string) => {
-    if (dirty && !window.confirm("Есть несохранённые изменения. Продолжить?")) {
+    if (armyId === selectedArmyId) {
       return;
     }
 
+    if (dirty && !persistDraft()) {
+      if (
+        !window.confirm(
+          "Не удалось сохранить (проверьте бюджет). Продолжить без сохранения?",
+        )
+      ) {
+        return;
+      }
+    }
+
     const army = armies.find((item) => item.id === armyId) ?? null;
+    if (!army) {
+      return;
+    }
+
+    setViewHeroId(army.heroId);
     setSelectedArmyId(armyId);
     loadArmyIntoEditor(army);
     setHeroPickerOpen(false);
@@ -133,25 +229,64 @@ function ArmiesScreen({ onBack }: ArmiesScreenProps) {
     setStatusMessage("");
   };
 
+  const switchViewHero = (heroId: string) => {
+    if (heroId === viewHeroId) {
+      setHeroPickerOpen(false);
+      return;
+    }
+
+    if (dirty && !persistDraft()) {
+      if (
+        !window.confirm(
+          "Не удалось сохранить (проверьте бюджет). Сменить героя без сохранения?",
+        )
+      ) {
+        return;
+      }
+      setDirty(false);
+    }
+
+    setViewHeroId(heroId);
+    setHeroPickerOpen(false);
+    setPoolQuery("");
+
+    const heroList = listArmies().filter((army) => army.heroId === heroId);
+    setArmies(listArmies());
+    const next = heroList[0] ?? null;
+    setSelectedArmyId(next?.id ?? null);
+    loadArmyIntoEditor(next);
+    setStatusMessage(
+      next
+        ? ""
+        : "У этого героя пока нет сборок — нажмите «Создать армию».",
+    );
+  };
+
   const handleCreate = () => {
-    if (!defaultHeroId) {
+    if (!viewHeroId) {
       setStatusMessage("Нет героев в каталоге.");
       return;
     }
 
-    if (dirty && !window.confirm("Есть несохранённые изменения. Создать новую армию?")) {
-      return;
+    if (dirty && !persistDraft()) {
+      if (
+        !window.confirm(
+          "Не удалось сохранить текущую сборку. Создать новую без сохранения?",
+        )
+      ) {
+        return;
+      }
+      setDirty(false);
     }
 
-    const heroIdForCreate = draftHeroId || defaultHeroId;
     const nextIndex =
-      listArmies().filter((army) => army.heroId === heroIdForCreate).length + 1;
+      listArmies().filter((army) => army.heroId === viewHeroId).length + 1;
     const army = createArmy({
       name: `Армия ${nextIndex}`.slice(0, ARMY_NAME_MAX_LENGTH),
-      heroId: heroIdForCreate,
+      heroId: viewHeroId,
     });
-    refreshArmies(army.id);
-    setStatusMessage("Армия создана.");
+    refreshArmies(army.id, viewHeroId);
+    setStatusMessage("Армия создана и сохранена.");
   };
 
   const handleDelete = () => {
@@ -164,8 +299,9 @@ function ArmiesScreen({ onBack }: ArmiesScreenProps) {
       return;
     }
 
+    const heroId = selectedArmy.heroId;
     deleteArmy(selectedArmy.id);
-    refreshArmies(null);
+    refreshArmies(null, heroId);
     setStatusMessage("Армия удалена.");
   };
 
@@ -173,28 +309,24 @@ function ArmiesScreen({ onBack }: ArmiesScreenProps) {
     if (!selectedArmy) {
       return;
     }
-
-    const unitIds = slotsToUnitIds(draftSlots);
-    const cost = sumArmyUnitCost(
-      unitIds,
-      (unitId) => getUnitById(unitId)?.cost,
-    );
-    if (cost > ARMY_BUDGET) {
-      setStatusMessage(
-        `Бюджет превышен: ${cost} / ${ARMY_BUDGET}. Уберите фигуры.`,
-      );
+    if (!dirty) {
+      setStatusMessage("Уже сохранено.");
       return;
     }
+    persistDraft();
+  };
 
-    const nextName = draftName.trim().slice(0, ARMY_NAME_MAX_LENGTH) || "Армия";
-    const saved = saveArmy({
-      ...selectedArmy,
-      name: nextName,
-      heroId: draftHeroId,
-      unitDefinitionIds: unitIds,
-    });
-    refreshArmies(saved.id);
-    setStatusMessage("Сохранено.");
+  const handleBack = () => {
+    if (dirty && !persistDraft()) {
+      if (
+        !window.confirm(
+          "Не удалось сохранить (проверьте бюджет). Выйти без сохранения?",
+        )
+      ) {
+        return;
+      }
+    }
+    onBack();
   };
 
   const filledCount = draftSlots.filter(Boolean).length;
@@ -373,42 +505,6 @@ function ArmiesScreen({ onBack }: ArmiesScreenProps) {
     }
   };
 
-  const selectHero = (nextHeroId: string) => {
-    setDraftHeroId(nextHeroId);
-    setHeroPickerOpen(false);
-
-    if (!selectedArmy) {
-      return;
-    }
-
-    setDraftSlots((current) => {
-      const cleared = current.map((unitId) => {
-        if (!unitId) {
-          return null;
-        }
-        const unit = getUnitById(unitId);
-        if (!unit) {
-          return null;
-        }
-        if (unit.heroId && unit.heroId !== nextHeroId) {
-          return null;
-        }
-        if (isKingUnit(unit)) {
-          return null;
-        }
-        return unitId;
-      });
-
-      return ensureHeroKingInSlots(
-        cleared,
-        nextHeroId,
-        getUnitById,
-        getKingUnitIdsForHero,
-      );
-    });
-    setDirty(true);
-  };
-
   const heroPoolUnits = useMemo(
     () => (draftHeroId ? getUnitsForArmyHero(draftHeroId) : []),
     [draftHeroId],
@@ -442,36 +538,98 @@ function ArmiesScreen({ onBack }: ArmiesScreenProps) {
   const draftHero = draftHeroId ? getHeroById(draftHeroId) ?? null : null;
   const openedUnit = openedUnitId ? getUnitById(openedUnitId) ?? null : null;
 
-  const activeHeroId = draftHeroId || defaultHeroId;
-
   const heroArmies = useMemo(() => {
-    if (!activeHeroId) {
+    if (!viewHeroId) {
       return [];
     }
 
     return armies
-      .filter((army) => {
-        const effectiveHeroId =
-          army.id === selectedArmyId && draftHeroId
-            ? draftHeroId
-            : army.heroId;
-        return effectiveHeroId === activeHeroId;
-      })
+      .filter((army) => army.heroId === viewHeroId)
       .sort((a, b) => b.updatedAt - a.updatedAt);
-  }, [activeHeroId, armies, draftHeroId, selectedArmyId]);
+  }, [armies, viewHeroId]);
 
-  const listHero = activeHeroId ? getHeroById(activeHeroId) ?? null : null;
+  const listHero = viewHeroId ? getHeroById(viewHeroId) ?? null : null;
 
   const heroPickerOptions = useMemo(
-    () => collection.heroes.filter((hero) => hero.id !== activeHeroId),
-    [activeHeroId, collection.heroes],
+    () => collection.heroes.filter((hero) => hero.id !== viewHeroId),
+    [collection.heroes, viewHeroId],
+  );
+
+  const heroPicker = (
+    <div className="armies-hero-picker" ref={heroPickerRef}>
+      <button
+        type="button"
+        className={`armies-hero-trigger${heroPickerOpen ? " is-open" : ""}`}
+        onClick={() => setHeroPickerOpen((open) => !open)}
+        aria-expanded={heroPickerOpen}
+        aria-haspopup="listbox"
+        aria-label="Герой — свой список армий"
+      >
+        {listHero ? (
+          <>
+            <NeonPortrait
+              portraitId={listHero.portraitId}
+              label={listHero.name}
+              size="md"
+            />
+            <span className="armies-hero-trigger-text">
+              <strong>{listHero.name}</strong>
+              <span>Сборки только этого героя</span>
+            </span>
+          </>
+        ) : (
+          <span className="armies-hero-trigger-text">
+            <strong>Выберите героя</strong>
+          </span>
+        )}
+        <span className="armies-hero-trigger-chevron" aria-hidden>
+          {heroPickerOpen ? "▴" : "▾"}
+        </span>
+      </button>
+      {heroPickerOpen && (
+        <div className="armies-hero-menu" role="listbox">
+          {heroPickerOptions.length === 0 ? (
+            <p className="armies-hero-menu-empty">Нет других героев</p>
+          ) : (
+            heroPickerOptions.map((hero) => (
+              <button
+                key={hero.id}
+                type="button"
+                role="option"
+                aria-selected={false}
+                className="armies-hero-option"
+                onClick={() => switchViewHero(hero.id)}
+              >
+                <NeonPortrait
+                  portraitId={hero.portraitId}
+                  label={hero.name}
+                  size="md"
+                />
+                <span className="armies-hero-option-text">
+                  <strong>{hero.name}</strong>
+                  <span>
+                    {
+                      armies.filter((army) => army.heroId === hero.id)
+                        .length
+                    }{" "}
+                    сб.
+                  </span>
+                </span>
+              </button>
+            ))
+          )}
+        </div>
+      )}
+    </div>
   );
 
   return (
-    <AppShell title="Армии" onBack={onBack}>
+    <AppShell title="Армии" onBack={handleBack}>
       <div className="armies-screen">
         <aside className="armies-list-panel">
           <div className="armies-list-square">
+            {heroPicker}
+
             <div className="armies-list-square-top">
               <span className="armies-list-square-label">Сборки:</span>
               <span className="armies-list-square-count">
@@ -489,7 +647,9 @@ function ArmiesScreen({ onBack }: ArmiesScreenProps) {
             {!listHero ? (
               <p className="armies-empty">Нет героев в каталоге.</p>
             ) : heroArmies.length === 0 ? (
-              <p className="armies-hero-group-empty">Нет сборок</p>
+              <p className="armies-hero-group-empty">
+                Нет сборок у «{listHero.name}»
+              </p>
             ) : (
               <ul className="armies-list">
                 {heroArmies.map((army) => {
@@ -527,67 +687,10 @@ function ArmiesScreen({ onBack }: ArmiesScreenProps) {
           {!selectedArmy ? (
             <div className="armies-editor-empty">
               <p className="armies-empty">
-                Выберите армию слева или создайте новую.
+                {listHero
+                  ? `У «${listHero.name}» нет сборок. Создайте армию слева — она сразу сохранится в список этого героя.`
+                  : "Выберите героя слева и создайте армию."}
               </p>
-              <div className="armies-hero-picker" ref={heroPickerRef}>
-                <button
-                  type="button"
-                  className={`armies-hero-trigger${heroPickerOpen ? " is-open" : ""}`}
-                  onClick={() => setHeroPickerOpen((open) => !open)}
-                  aria-expanded={heroPickerOpen}
-                  aria-haspopup="listbox"
-                  aria-label="Выбор героя"
-                >
-                  {listHero ? (
-                    <>
-                      <NeonPortrait
-                        portraitId={listHero.portraitId}
-                        label={listHero.name}
-                        size="md"
-                      />
-                        <span className="armies-hero-trigger-text">
-                          <strong>{listHero.name}</strong>
-                          <span>{listHero.description}</span>
-                        </span>
-                    </>
-                  ) : (
-                    <span className="armies-hero-trigger-text">
-                      <strong>Выберите героя</strong>
-                    </span>
-                  )}
-                  <span className="armies-hero-trigger-chevron" aria-hidden>
-                    {heroPickerOpen ? "▴" : "▾"}
-                  </span>
-                </button>
-                {heroPickerOpen && (
-                  <div className="armies-hero-menu" role="listbox">
-                    {heroPickerOptions.length === 0 ? (
-                      <p className="armies-hero-menu-empty">Нет других героев</p>
-                    ) : (
-                      heroPickerOptions.map((hero) => (
-                        <button
-                          key={hero.id}
-                          type="button"
-                          role="option"
-                          aria-selected={false}
-                          className="armies-hero-option"
-                          onClick={() => selectHero(hero.id)}
-                        >
-                          <NeonPortrait
-                            portraitId={hero.portraitId}
-                            label={hero.name}
-                            size="md"
-                          />
-                          <span className="armies-hero-option-text">
-                            <strong>{hero.name}</strong>
-                            <span>{hero.traitDescription}</span>
-                          </span>
-                        </button>
-                      ))
-                    )}
-                  </div>
-                )}
-              </div>
             </div>
           ) : (
             <>
@@ -627,66 +730,19 @@ function ArmiesScreen({ onBack }: ArmiesScreenProps) {
                   )}
                 </div>
 
-                <div className="armies-hero-picker" ref={heroPickerRef}>
-                  <button
-                    type="button"
-                    className={`armies-hero-trigger${heroPickerOpen ? " is-open" : ""}`}
-                    onClick={() => setHeroPickerOpen((open) => !open)}
-                    aria-expanded={heroPickerOpen}
-                    aria-haspopup="listbox"
-                    aria-label="Выбор героя"
-                  >
-                    {draftHero ? (
-                      <>
-                        <NeonPortrait
-                          portraitId={draftHero.portraitId}
-                          label={draftHero.name}
-                          size="md"
-                        />
-                        <span className="armies-hero-trigger-text">
-                          <strong>{draftHero.name}</strong>
-                          <span>{draftHero.description}</span>
-                        </span>
-                      </>
-                    ) : (
-                      <span className="armies-hero-trigger-text">
-                        <strong>Выберите героя</strong>
-                      </span>
-                    )}
-                    <span className="armies-hero-trigger-chevron" aria-hidden>
-                      {heroPickerOpen ? "▴" : "▾"}
+                {draftHero && (
+                  <div className="armies-hero-readonly">
+                    <NeonPortrait
+                      portraitId={draftHero.portraitId}
+                      label={draftHero.name}
+                      size="md"
+                    />
+                    <span className="armies-hero-trigger-text">
+                      <strong>{draftHero.name}</strong>
+                      <span>{draftHero.description}</span>
                     </span>
-                  </button>
-
-                  {heroPickerOpen && (
-                    <div className="armies-hero-menu" role="listbox">
-                      {heroPickerOptions.length === 0 ? (
-                        <p className="armies-hero-menu-empty">Нет других героев</p>
-                      ) : (
-                        heroPickerOptions.map((hero) => (
-                          <button
-                            key={hero.id}
-                            type="button"
-                            role="option"
-                            aria-selected={false}
-                            className="armies-hero-option"
-                            onClick={() => selectHero(hero.id)}
-                          >
-                            <NeonPortrait
-                              portraitId={hero.portraitId}
-                              label={hero.name}
-                              size="md"
-                            />
-                            <span className="armies-hero-option-text">
-                              <strong>{hero.name}</strong>
-                              <span>{hero.traitDescription}</span>
-                            </span>
-                          </button>
-                        ))
-                      )}
-                    </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
 
               <h3 className="armies-section-title">

@@ -55,7 +55,7 @@ function PlayScreen({ onBack, onStartClassicOffline }: PlayScreenProps) {
         setStatusMessage("Онлайн-режим пока не готов.");
         return;
       }
-      setStatusMessage("Выберите Онлайн или Оффлайн.");
+      setStatusMessage("Выберите Онлайн или Локальную (2 окна).");
       return;
     }
 
@@ -93,8 +93,8 @@ function PlayScreen({ onBack, onStartClassicOffline }: PlayScreenProps) {
                 {selectedMode.id === "classic" ? (
                   <>
                     <p className="play-mode-panel-note">
-                      Пошаговая партия, как в шахматах: игроки ходят по
-                      очереди. Поле 16×16, армии из раздела «Армии».
+                      Пошаговая партия 8×8. Локальная игра: две вкладки
+                      (Игрок 1 и Игрок 2) на одном компьютере, без сети.
                     </p>
                     <div className="play-channel-row">
                       <button
@@ -109,7 +109,7 @@ function PlayScreen({ onBack, onStartClassicOffline }: PlayScreenProps) {
                         className={`play-channel-btn${classicChannel === "offline" ? " is-active" : ""}`}
                         onClick={handleClassicOffline}
                       >
-                        Оффлайн
+                        Локальная (2 окна)
                       </button>
                     </div>
                   </>

@@ -1,23 +1,55 @@
 :root {
-  --bg-primary: #030508;
-  --bg-panel: rgba(6, 14, 24, 0.82);
-  --metal-dark: #0a1220;
-  --steel: #1a3048;
-  --glass-border: rgba(0, 196, 255, 0.35);
-  --energy: #00c4ff;
-  --accent-neon: #6ee7ff;
-  --accent-dim: #1a6a8a;
-  --glow: rgba(0, 196, 255, 0.45);
-  --glow-soft: rgba(0, 196, 255, 0.12);
-  /* Player faction wash (taskbar hover). */
-  --faction-player: #00c4ff;
-  --faction-player-hover: rgba(0, 196, 255, 0.18);
-  --faction-player-hover-strong: rgba(0, 196, 255, 0.28);
-  --warning: #ffaa33;
-  --danger: #ff4466;
-  --text-main: #c8e8f8;
-  --text-muted: #5a7a94;
+  /* Cyberpunk 2077 / Night City */
+  --bg-primary: #0d0d0f;
+  --bg-deep: #050506;
+  --bg-panel: rgba(18, 14, 20, 0.92);
+  --metal-dark: #16131a;
+  --steel: #2a2430;
 
+  --cp-yellow: #fcee0a;
+  --cp-yellow-dim: #a89a08;
+  --cp-magenta: #ff2a6d;
+  --cp-cyan: #00f0ff;
+  --cp-orange: #ff6a00;
+
+  --glass-border: rgba(252, 238, 10, 0.35);
+  --energy: var(--cp-yellow);
+  --accent-neon: var(--cp-yellow);
+  --accent-dim: #3d3808;
+  --glow: rgba(252, 238, 10, 0.45);
+  --glow-soft: rgba(252, 238, 10, 0.12);
+
+  --faction-player: var(--cp-yellow);
+  --faction-player-hover: rgba(252, 238, 10, 0.16);
+  --faction-player-hover-strong: rgba(252, 238, 10, 0.28);
+
+  --warning: var(--cp-orange);
+  --danger: var(--cp-magenta);
+  --text-main: #f2efe6;
+  --text-muted: #8b8680;
+
+  --font-display: "Oxanium", "Segoe UI", sans-serif;
+  --font-body: "Rajdhani", "Segoe UI", sans-serif;
+  --font-mono: "Share Tech Mono", "Consolas", monospace;
+
+  --clip-panel: polygon(
+    0 0,
+    calc(100% - 14px) 0,
+    100% 14px,
+    100% 100%,
+    14px 100%,
+    0 calc(100% - 14px)
+  );
+  --clip-btn: polygon(
+    0 0,
+    calc(100% - 10px) 0,
+    100% 10px,
+    100% 100%,
+    10px 100%,
+    0 calc(100% - 10px)
+  );
+
+  /* Legacy aliases used in older CSS */
   --necron-green: var(--accent-neon);
   --necron-dark: var(--bg-primary);
   --necron-panel: var(--metal-dark);

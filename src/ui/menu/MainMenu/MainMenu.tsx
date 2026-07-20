@@ -24,6 +24,9 @@ function MainMenu({ onNavigate }: MainMenuProps) {
             <h1 className="main-menu-title">Space Chess</h1>
           </div>
         </div>
+        <p className="main-menu-slogan">
+          Шахматы умерли в XXI веке. В XXII они научились стрелять.
+        </p>
         <nav className="main-menu-nav" aria-label="Главное меню">
           {ITEMS.map((item) => (
             <button

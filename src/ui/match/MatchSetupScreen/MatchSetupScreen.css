@@ -13,6 +13,8 @@
   max-width: 720px;
   color: var(--text-muted);
   line-height: 1.45;
+  font-family: var(--font-body);
+  font-weight: 600;
 }
 
 .match-setup-grid {
@@ -27,7 +29,11 @@
   gap: 12px;
   padding: 16px;
   border: 1px solid var(--glass-border);
-  background: rgba(4, 12, 22, 0.55);
+  background:
+    linear-gradient(160deg, rgba(252, 238, 10, 0.05), transparent 50%),
+    var(--bg-panel);
+  box-shadow: 0 0 0 1px rgba(255, 42, 109, 0.1);
+  clip-path: var(--clip-panel);
 }
 
 .match-setup-seat-header {
@@ -42,7 +48,8 @@
   font-size: 14px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--accent-neon);
+  color: var(--cp-yellow);
+  font-family: var(--font-display);
 }
 
 .match-setup-field {
@@ -53,17 +60,26 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-muted);
+  font-family: var(--font-mono);
 }
 
 .match-setup-field select {
   height: 34px;
   padding: 0 10px;
-  border: 1px solid rgba(0, 196, 255, 0.35);
-  background: rgba(4, 12, 22, 0.9);
+  border: 1px solid rgba(252, 238, 10, 0.35);
+  background: rgba(8, 6, 10, 0.95);
   color: var(--text-main);
+  font-family: var(--font-body);
   font-size: 13px;
   text-transform: none;
   letter-spacing: 0.02em;
+  clip-path: var(--clip-btn);
+}
+
+.match-setup-field select:focus {
+  outline: none;
+  border-color: var(--cp-yellow);
+  box-shadow: 0 0 10px var(--glow-soft);
 }
 
 .match-setup-trait {
@@ -77,12 +93,15 @@
   margin: 0;
   font-size: 12px;
   color: var(--warning);
+  font-family: var(--font-mono);
 }
 
 .match-setup-error {
   margin: 0;
-  color: #ff8a96;
+  color: var(--cp-magenta);
   font-size: 13px;
+  font-family: var(--font-body);
+  font-weight: 600;
 }
 
 .match-setup-actions {
@@ -93,19 +112,26 @@
 .match-setup-start {
   height: 40px;
   padding: 0 22px;
-  border: 1px solid var(--glass-border);
-  background: rgba(0, 40, 60, 0.9);
-  color: var(--accent-neon);
+  border: 1px solid var(--cp-yellow);
+  background: rgba(252, 238, 10, 0.12);
+  color: var(--cp-yellow);
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
+  clip-path: var(--clip-btn);
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s,
+    background 0.15s;
 }
 
 .match-setup-start:hover:not(:disabled) {
-  border-color: var(--energy);
-  box-shadow: 0 0 14px var(--glow-soft);
+  border-color: var(--cp-yellow);
+  background: rgba(252, 238, 10, 0.2);
+  box-shadow: 0 0 18px var(--glow-soft);
 }
 
 .match-setup-start:disabled {

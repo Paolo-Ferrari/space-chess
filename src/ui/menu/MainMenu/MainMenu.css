@@ -4,24 +4,30 @@
   width: 100vw;
   height: 100vh;
   background:
-    linear-gradient(180deg, rgba(0, 40, 60, 0.2), transparent 40%),
-    radial-gradient(circle at 20% 20%, rgba(0, 196, 255, 0.08), transparent 40%),
-    var(--bg-primary);
+    linear-gradient(105deg, rgba(252, 238, 10, 0.07), transparent 35%),
+    linear-gradient(300deg, rgba(255, 42, 109, 0.1), transparent 40%),
+    radial-gradient(circle at 70% 80%, rgba(0, 240, 255, 0.08), transparent 40%),
+    var(--bg-deep);
 }
 
 .main-menu-frame {
-  width: min(420px, calc(100vw - 32px));
-  padding: 36px 28px;
+  width: min(460px, calc(100vw - 32px));
+  padding: 40px 32px 32px;
   border: 1px solid var(--glass-border);
-  background: rgba(4, 12, 22, 0.88);
-  box-shadow: 0 0 40px var(--glow-soft);
+  background:
+    linear-gradient(160deg, rgba(252, 238, 10, 0.06), transparent 50%),
+    var(--bg-panel);
+  box-shadow:
+    0 0 0 1px rgba(255, 42, 109, 0.15),
+    0 0 48px var(--glow-soft);
+  clip-path: var(--clip-panel);
 }
 
 .main-menu-brand {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 28px;
+  gap: 16px;
+  margin-bottom: 18px;
 }
 
 .main-menu-brand-text {
@@ -30,21 +36,34 @@
 
 .main-menu-kicker {
   margin: 0 0 6px;
-  font-size: 11px;
-  letter-spacing: 0.18em;
+  font-size: 12px;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--text-muted);
-  font-family: "Consolas", "Segoe UI Mono", monospace;
+  color: var(--cp-magenta);
+  font-family: var(--font-mono);
 }
 
 .main-menu-title {
   margin: 0;
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--accent-neon);
-  text-shadow: 0 0 18px var(--glow);
+  color: var(--cp-yellow);
+  text-shadow: 0 0 22px var(--glow);
+  font-family: var(--font-display);
+}
+
+.main-menu-slogan {
+  margin: 0 0 28px;
+  padding: 12px 0 0;
+  border-top: 1px solid rgba(252, 238, 10, 0.2);
+  font-size: 15px;
+  line-height: 1.4;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-weight: 600;
 }
 
 .main-menu-nav {
@@ -58,27 +77,34 @@
   align-items: center;
   gap: 12px;
   width: 100%;
-  height: 48px;
-  padding: 0 16px;
-  border: 1px solid rgba(0, 196, 255, 0.35);
-  background: rgba(0, 24, 36, 0.75);
+  height: 50px;
+  padding: 0 18px;
+  border: 1px solid rgba(252, 238, 10, 0.4);
+  background: rgba(252, 238, 10, 0.04);
   color: var(--text-main);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   text-align: left;
   cursor: pointer;
-  transition: border-color 0.15s, box-shadow 0.15s, color 0.15s;
+  clip-path: var(--clip-btn);
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s,
+    color 0.15s,
+    background 0.15s;
 }
 
 .main-menu-button:hover {
-  border-color: var(--energy);
-  color: var(--accent-neon);
-  box-shadow: 0 0 18px var(--glow-soft);
+  border-color: var(--cp-yellow);
+  color: var(--cp-yellow);
+  background: rgba(252, 238, 10, 0.12);
+  box-shadow: 0 0 22px var(--glow-soft);
 }
 
 .main-menu-button-mark {
-  color: var(--accent-neon);
-  font-family: "Consolas", "Segoe UI Mono", monospace;
+  color: var(--cp-yellow);
+  font-family: var(--font-mono);
+  font-size: 18px;
 }

@@ -1,9 +1,14 @@
 import type { UnitDefinition } from "../unit/unit.types";
 
-import { chebyshev, inBounds, pieceAt } from "./board";
+import { chebyshev, inBounds, manhattan, orthogonalSteps, pieceAt } from "./board";
 import type { BoardPos, MatchPiece, MatchState } from "./match.types";
 import { ATTACK_RANGE, MOVE_RANGE } from "./match.types";
 
+/**
+ * Factor 1 — base movement for every unit:
+ * up / down / left / right by MOVE_RANGE (1), onto empty cells.
+ * Factor 2 (unit abilities) may replace or extend this later — not invented here.
+ */
 export function getLegalMoves(
   state: MatchState,
   piece: MatchPiece,
@@ -13,24 +18,29 @@ export function getLegalMoves(
   }
 
   const moves: BoardPos[] = [];
-  for (let y = 0; y < state.boardSize; y += 1) {
-    for (let x = 0; x < state.boardSize; x += 1) {
-      const pos = { x, y };
-      if (!inBounds(pos, state.boardSize)) {
-        continue;
-      }
-      if (chebyshev(piece, pos) === 0 || chebyshev(piece, pos) > MOVE_RANGE) {
-        continue;
-      }
-      if (pieceAt(state.pieces, pos)) {
-        continue;
-      }
-      moves.push(pos);
+  for (const step of orthogonalSteps()) {
+    const pos = {
+      x: piece.x + step.x * MOVE_RANGE,
+      y: piece.y + step.y * MOVE_RANGE,
+    };
+    if (!inBounds(pos, state.boardSize)) {
+      continue;
     }
+    if (manhattan(piece, pos) !== MOVE_RANGE) {
+      continue;
+    }
+    if (pieceAt(state.pieces, pos)) {
+      continue;
+    }
+    moves.push(pos);
   }
   return moves;
 }
 
+/**
+ * Base attacks: adjacent enemies within ATTACK_RANGE (currently Chebyshev ≤ 1).
+ * Special ranged / immobile attackers come from Factor 2 abilities — ask before changing.
+ */
 export function getLegalAttacks(
   state: MatchState,
   piece: MatchPiece,
