@@ -1,0 +1,34 @@
+.player-panel--active {
+  box-shadow:
+    inset 0 0 0 1px rgba(252, 238, 10, 0.25),
+    0 0 24px rgba(252, 238, 10, 0.12);
+}
+
+.player-panel--enemy.player-panel--active {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 42, 109, 0.3),
+    0 0 24px rgba(255, 42, 109, 0.12);
+}
+
+.player-panel__stats {
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.player-panel__stats div {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.player-panel__stats dt {
+  color: var(--text-muted);
+}
+
+.player-panel__stats dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  color: var(--text-main);
+}

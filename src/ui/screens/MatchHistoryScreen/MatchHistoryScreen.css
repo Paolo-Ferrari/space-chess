@@ -1,0 +1,51 @@
+.match-history__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.match-history__row {
+  display: grid;
+  grid-template-columns: 1.2fr 1.4fr 0.8fr;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.match-history__row.is-victory {
+  border-color: rgba(125, 255, 179, 0.35);
+}
+
+.match-history__row.is-defeat {
+  border-color: rgba(255, 125, 125, 0.35);
+}
+
+.match-history__row div {
+  display: grid;
+  gap: 4px;
+}
+
+.match-history__row strong {
+  font-family: var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.match-history__row span {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.match-history__empty {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+@media (max-width: 800px) {
+  .match-history__row {
+    grid-template-columns: 1fr;
+  }
+}

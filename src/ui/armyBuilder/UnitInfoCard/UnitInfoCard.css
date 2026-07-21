@@ -1,0 +1,56 @@
+.unit-info-card__empty {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.unit-info-card {
+  display: grid;
+  gap: 14px;
+}
+
+.unit-info-card__stats {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.unit-info-card__stats div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.unit-info-card__stats dt {
+  color: var(--text-muted);
+}
+
+.unit-info-card__stats dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  color: var(--cp-yellow);
+}
+
+.unit-info-card__desc {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.45;
+  font-size: 14px;
+}
+
+.unit-info-card__role {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cp-cyan);
+}
+
+.unit-info-card__kit {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}

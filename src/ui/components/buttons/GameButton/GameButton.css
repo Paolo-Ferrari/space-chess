@@ -1,0 +1,74 @@
+.game-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid transparent;
+  background: rgba(252, 238, 10, 0.1);
+  color: var(--cp-yellow);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  clip-path: var(--clip-btn);
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.game-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 0 18px var(--glow-soft);
+}
+
+.game-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.game-btn__mark {
+  opacity: 0.7;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.game-btn--primary {
+  border-color: var(--cp-yellow);
+  background: linear-gradient(
+    120deg,
+    rgba(252, 238, 10, 0.18),
+    rgba(255, 42, 109, 0.08)
+  );
+}
+
+.game-btn--primary:hover:not(:disabled) {
+  background: rgba(252, 238, 10, 0.22);
+}
+
+.game-btn--secondary {
+  border-color: rgba(0, 240, 255, 0.55);
+  color: var(--cp-cyan);
+  background: rgba(0, 240, 255, 0.08);
+}
+
+.game-btn--ghost {
+  border-color: rgba(242, 239, 230, 0.22);
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.game-btn--danger {
+  border-color: var(--cp-magenta);
+  color: var(--cp-magenta);
+  background: rgba(255, 42, 109, 0.1);
+}
+
+.game-btn--block {
+  width: 100%;
+  justify-content: flex-start;
+}

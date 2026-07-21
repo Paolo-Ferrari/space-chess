@@ -1,0 +1,130 @@
+.army-create {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  align-items: stretch;
+}
+
+.army-create__factions {
+  display: grid;
+  gap: 10px;
+}
+
+.army-create__faction {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--text-main);
+  text-align: left;
+  cursor: pointer;
+  clip-path: var(--clip-btn);
+}
+
+.army-create__faction span {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--cp-cyan);
+}
+
+.army-create__faction strong {
+  font-family: var(--font-display);
+  font-size: 16px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.army-create__faction.is-active {
+  border-color: var(--cp-yellow);
+  box-shadow: inset 0 0 0 1px rgba(252, 238, 10, 0.25);
+  background: rgba(252, 238, 10, 0.08);
+}
+
+.army-create__units {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.army-create__unit {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-main);
+  cursor: pointer;
+  text-align: left;
+}
+
+.army-create__unit strong {
+  display: block;
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.army-create__unit em {
+  display: block;
+  margin-top: 2px;
+  font-style: normal;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.army-create__unit.is-active {
+  border-color: rgba(0, 240, 255, 0.55);
+  background: rgba(0, 240, 255, 0.08);
+}
+
+.army-create__cost,
+.army-create__selected span {
+  font-family: var(--font-mono);
+  color: var(--cp-yellow);
+}
+
+.army-create__selected {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.army-create__selected li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.army-create__budget {
+  margin: 0;
+  flex: 1;
+  color: var(--text-muted);
+  align-self: center;
+}
+
+.army-create__budget strong {
+  color: var(--cp-yellow);
+  font-family: var(--font-mono);
+}
+
+.army-create__empty {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+@media (max-width: 980px) {
+  .army-create {
+    grid-template-columns: 1fr;
+  }
+}

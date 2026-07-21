@@ -1,0 +1,57 @@
+.my-armies__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.my-armies__card {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.my-armies__tag {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--cp-cyan);
+}
+
+.my-armies__card h3 {
+  margin: 4px 0;
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.my-armies__meta {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.my-armies__roster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.my-armies__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.my-armies__empty {
+  margin: 0 0 14px;
+  color: var(--text-muted);
+}

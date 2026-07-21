@@ -1,0 +1,45 @@
+.screen-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.screen-header__text {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.screen-header__back {
+  align-self: flex-start;
+  min-height: 36px;
+  font-size: 13px;
+}
+
+.screen-header__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cp-yellow);
+  text-shadow: 0 0 24px var(--glow-soft);
+}
+
+.screen-header__subtitle {
+  margin: 8px 0 0;
+  max-width: 52ch;
+  color: var(--text-muted);
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.screen-header__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}

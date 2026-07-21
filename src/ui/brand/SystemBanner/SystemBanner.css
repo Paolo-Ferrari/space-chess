@@ -1,0 +1,64 @@
+.system-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.45);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  clip-path: var(--clip-btn);
+}
+
+.system-banner__tick {
+  width: 8px;
+  height: 8px;
+  background: var(--brand-cyan);
+  box-shadow: 0 0 10px var(--brand-cyan);
+}
+
+.system-banner__text {
+  flex: 1;
+  color: var(--text-main);
+}
+
+.system-banner__brand {
+  color: var(--text-muted);
+}
+
+.system-banner--ready .system-banner__tick {
+  background: #7dffb3;
+  box-shadow: 0 0 10px #7dffb3;
+}
+
+.system-banner--warn {
+  border-color: rgba(252, 238, 10, 0.4);
+}
+
+.system-banner--warn .system-banner__tick {
+  background: var(--brand-yellow);
+  box-shadow: 0 0 10px var(--brand-yellow);
+}
+
+.system-banner--critical {
+  border-color: rgba(255, 42, 109, 0.5);
+}
+
+.system-banner--critical .system-banner__tick,
+.system-banner--critical .system-banner__text {
+  color: var(--brand-magenta);
+}
+
+.system-banner--critical .system-banner__tick {
+  background: var(--brand-magenta);
+  box-shadow: 0 0 12px var(--brand-magenta);
+  animation: system-banner-blink 0.9s steps(2) infinite;
+}
+
+@keyframes system-banner-blink {
+  50% {
+    opacity: 0.35;
+  }
+}

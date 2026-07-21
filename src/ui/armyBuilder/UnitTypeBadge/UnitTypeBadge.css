@@ -1,0 +1,36 @@
+.unit-type-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-muted);
+}
+
+.unit-type-badge--commander {
+  border-color: rgba(252, 238, 10, 0.55);
+  color: var(--cp-yellow);
+}
+
+.unit-type-badge--ripperdoc {
+  border-color: rgba(0, 240, 255, 0.55);
+  color: var(--cp-cyan);
+}
+
+.unit-type-badge--special {
+  border-color: rgba(255, 42, 109, 0.55);
+  color: var(--cp-magenta);
+}
+
+.unit-type-badge--legendary {
+  border-color: rgba(255, 106, 0, 0.7);
+  color: var(--cp-orange);
+  box-shadow: 0 0 10px rgba(255, 106, 0, 0.25);
+}
+
+.unit-type-badge--edgerunner {
+  border-color: rgba(255, 42, 109, 0.65);
+  color: var(--cp-magenta);
+}

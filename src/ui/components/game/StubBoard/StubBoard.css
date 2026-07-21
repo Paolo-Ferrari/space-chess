@@ -1,0 +1,54 @@
+.stub-board {
+  --board-size: 8;
+  display: grid;
+  grid-template-columns: repeat(var(--board-size), minmax(0, 1fr));
+  gap: 3px;
+  width: min(100%, 560px);
+  aspect-ratio: 1;
+  margin: 0 auto;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+}
+
+.stub-board__cell {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  padding: 0;
+  min-height: 0;
+}
+
+.stub-board__cell:nth-child(odd) {
+  background: rgba(252, 238, 10, 0.04);
+}
+
+.stub-board__cell--selected {
+  outline: 2px solid var(--cp-yellow);
+  outline-offset: -2px;
+  box-shadow: inset 0 0 16px var(--glow-soft);
+}
+
+.stub-board__cell--ally {
+  background: rgba(252, 238, 10, 0.1);
+}
+
+.stub-board__cell--enemy {
+  background: rgba(255, 42, 109, 0.12);
+}
+
+.stub-board__piece {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  font-size: clamp(14px, 2.4vw, 22px);
+  color: var(--cp-cyan);
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.45);
+}
+
+.stub-board__cell--enemy .stub-board__piece {
+  color: var(--cp-magenta);
+  text-shadow: 0 0 10px rgba(255, 42, 109, 0.45);
+}

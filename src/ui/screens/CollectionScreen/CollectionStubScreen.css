@@ -1,0 +1,28 @@
+.collection-stub__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.collection-stub__meta {
+  margin: 0 0 6px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.collection-stub__footer {
+  margin-top: 18px;
+}
+
+@media (max-width: 900px) {
+  .collection-stub__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .collection-stub__grid {
+    grid-template-columns: 1fr;
+  }
+}

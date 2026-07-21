@@ -5,6 +5,8 @@ import App from "./App";
 
 import "../styles/reset.css";
 import "../styles/variables.css";
+import "../styles/brand.css";
+import "../styles/visual.css";
 import "../styles/globals.css";
 
 

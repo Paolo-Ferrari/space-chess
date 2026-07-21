@@ -1,0 +1,5 @@
+.mode-select__grid {
+  display: grid;
+  gap: 12px;
+  max-width: 420px;
+}

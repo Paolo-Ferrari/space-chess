@@ -1,15 +1,20 @@
-import type { AppScreen } from "../../../app/navigation";
+/**
+ * Legacy menu — не используется App.tsx (см. screens/MainMenuScreen).
+ * Оставлен как временный файл; типы не связаны с текущей навигацией.
+ */
 import BrandMark from "../../shared/BrandMark/BrandMark";
 
 import "./MainMenu.css";
 
+type LegacyMenuScreen = "menu" | "mode-select" | "army-create" | "settings";
+
 interface MainMenuProps {
-  onNavigate: (screen: AppScreen) => void;
+  onNavigate: (screen: LegacyMenuScreen) => void;
 }
 
-const ITEMS: Array<{ id: AppScreen; label: string }> = [
-  { id: "play", label: "Играть" },
-  { id: "armies", label: "Армии" },
+const ITEMS: Array<{ id: LegacyMenuScreen; label: string }> = [
+  { id: "mode-select", label: "Играть" },
+  { id: "army-create", label: "Армии" },
   { id: "settings", label: "Настройки" },
 ];
 

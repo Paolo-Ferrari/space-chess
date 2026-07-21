@@ -1,209 +1,340 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-import type { MatchConfig, PlayerId } from "../domain/match/match.types";
-import {
-  buildLocalMatchWindowUrl,
-  clearLocalMatchRoute,
-  clearLocalMatchSession,
-  createLocalMatchSession,
-  joinLocalMatchSession,
-  launchLocalMatchWindows,
-  launchPlayerTwoTab,
-  parseLocalMatchRoute,
-} from "../services/match/session/localMatchSession";
-import type { MatchSessionSource } from "../services/match/session/matchSession.types";
-import ArmiesScreen from "../ui/armies/ArmiesScreen/ArmiesScreen";
-import LocalMatchHostScreen from "../ui/match/LocalMatchHostScreen/LocalMatchHostScreen";
-import MatchScreen from "../ui/match/MatchScreen/MatchScreen";
-import MatchSetupScreen from "../ui/match/MatchSetupScreen/MatchSetupScreen";
-import MainMenu from "../ui/menu/MainMenu/MainMenu";
-import PlayScreen from "../ui/menu/PlayScreen/PlayScreen";
-import SettingsScreen from "../ui/menu/SettingsScreen/SettingsScreen";
+import { applyDocumentBrandTitle } from "../brand/brand.config";
+import type { AiDifficulty } from "../domain/ai";
+import type { AuthSession } from "../domain/account/types";
+import type { Army } from "../domain/armyBuilder/types";
+import { AuthService } from "../services/account/authService";
+import { MatchHistoryService } from "../services/account/matchHistoryService";
+import { AI_DIFFICULTY_LABELS } from "../domain/ai/types";
+import LoadingScreen from "../ui/brand/LoadingScreen/LoadingScreen";
+import ArmyBuilderScreen from "../ui/screens/ArmyBuilderScreen/ArmyBuilderScreen";
+import ArmyReadyScreen from "../ui/screens/ArmyReadyScreen/ArmyReadyScreen";
+import AuthScreen from "../ui/screens/AuthScreen/AuthScreen";
+import BattleScreen from "../ui/screens/BattleScreen/BattleScreen";
+import CollectionStubScreen from "../ui/screens/CollectionScreen/CollectionStubScreen";
+import MainMenuScreen from "../ui/screens/MainMenuScreen/MainMenuScreen";
+import MatchHistoryScreen from "../ui/screens/MatchHistoryScreen/MatchHistoryScreen";
+import ModeSelectScreen from "../ui/screens/ModeSelectScreen/ModeSelectScreen";
+import ModeStubScreen from "../ui/screens/ModeStubScreen/ModeStubScreen";
+import MyArmiesScreen from "../ui/screens/MyArmiesScreen/MyArmiesScreen";
+import ProfileScreen from "../ui/screens/ProfileScreen/ProfileScreen";
+import ResultScreen from "../ui/screens/ResultScreen/ResultScreen";
+import SettingsStubScreen from "../ui/screens/SettingsScreen/SettingsStubScreen";
 
-import type { AppScreen } from "./navigation";
+import type {
+  AppScreen,
+  AuthReturnTarget,
+  ModeStubKind,
+} from "./navigation";
 
-function readJoinedSession(): {
-  session: MatchSessionSource;
-  seat: PlayerId;
-} | null {
-  const route = parseLocalMatchRoute();
-  if (!route) {
-    return null;
-  }
-  const session = joinLocalMatchSession(route.sessionId);
-  if (!session) {
-    return null;
-  }
-  return { session, seat: route.seat };
+interface MatchContext {
+  army: Army;
+  mode: "ai" | "hotseat";
+  difficulty: AiDifficulty;
+  startedAt: number;
+  turnCount: number;
+  durationMs: number;
+  result: "victory" | "defeat" | "draw";
 }
 
+/**
+ * App shell: branded boot → account progress + army builder + battle.
+ */
 function App() {
-  const initialJoin = useMemo(() => readJoinedSession(), []);
-
-  const [screen, setScreen] = useState<AppScreen>(() =>
-    initialJoin ? "match" : "menu",
+  const [booting, setBooting] = useState(true);
+  const [screen, setScreen] = useState<AppScreen>("menu");
+  const [modeStub, setModeStub] = useState<ModeStubKind>("solo");
+  const [aiDifficulty, setAiDifficulty] = useState<AiDifficulty>("normal");
+  const [returnAfterArmy, setReturnAfterArmy] = useState<"match" | "menu">(
+    "menu",
   );
-  const [activeSession, setActiveSession] = useState<MatchSessionSource | null>(
-    () => initialJoin?.session ?? null,
+  const [activeArmy, setActiveArmy] = useState<Army | null>(null);
+  const [session, setSession] = useState<AuthSession | null>(() =>
+    AuthService.getSession(),
   );
-  const [activeSeat, setActiveSeat] = useState<PlayerId>(
-    () => initialJoin?.seat ?? 0,
-  );
-  const [hostSessionId, setHostSessionId] = useState<string | null>(null);
-  const [hostUrls, setHostUrls] = useState<[string, string] | null>(null);
-  const [playerTwoTabOpened, setPlayerTwoTabOpened] = useState(true);
-  const [bootError] = useState(() => {
-    if (parseLocalMatchRoute() && !initialJoin) {
-      return "Сессия локальной партии не найдена. Запустите игру снова из «Играть».";
-    }
-    return "";
-  });
+  const [authReturn, setAuthReturn] = useState<AuthReturnTarget>("menu");
+  const [lastMatch, setLastMatch] = useState<MatchContext | null>(null);
 
-  const leaveSeatWindow = useCallback(() => {
-    activeSession?.dispose();
-    setActiveSession(null);
-    clearLocalMatchRoute();
-    setHostSessionId(null);
-    setHostUrls(null);
-    setPlayerTwoTabOpened(true);
-    setScreen("menu");
-  }, [activeSession]);
-
-  const leaveHost = useCallback(() => {
-    if (hostSessionId) {
-      clearLocalMatchSession(hostSessionId);
-    }
-    setHostSessionId(null);
-    setHostUrls(null);
-    setPlayerTwoTabOpened(true);
-    setScreen("menu");
-  }, [hostSessionId]);
-
-  /**
-   * Local dual play:
-   * - THIS tab becomes Player 1 and enters the match immediately
-   * - a second browser tab opens for Player 2
-   */
-  const startLocalDual = useCallback((config: MatchConfig) => {
-    const session = createLocalMatchSession(config);
-    const launch = launchPlayerTwoTab(session.sessionId);
-    const seat0Url = buildLocalMatchWindowUrl(session.sessionId, 0);
-
-    window.history.replaceState({}, "", seat0Url);
-    setActiveSession(session);
-    setActiveSeat(0);
-    setHostSessionId(session.sessionId);
-    setHostUrls(launch.urls);
-    setPlayerTwoTabOpened(launch.opened);
-    setScreen("match");
+  useEffect(() => {
+    applyDocumentBrandTitle();
   }, []);
 
-  const openPlayerTwoTab = useCallback(() => {
-    if (!hostSessionId) {
+  const finishBoot = useCallback(() => {
+    setBooting(false);
+  }, []);
+
+  const opponentMode = modeStub === "solo" ? "ai" : "hotseat";
+
+  const requireAuth = (target: AuthReturnTarget) => {
+    const current = AuthService.getSession();
+    if (current) {
+      setSession(current);
+      setScreen(
+        target === "mode-select"
+          ? "mode-select"
+          : target === "army-create"
+            ? "army-create"
+            : target,
+      );
       return;
     }
-    const launch = launchPlayerTwoTab(hostSessionId);
-    setHostUrls(launch.urls);
-    setPlayerTwoTabOpened(launch.opened);
-  }, [hostSessionId]);
+    setAuthReturn(target);
+    setScreen("auth");
+  };
 
-  if (screen === "match" && activeSession) {
-    return (
-      <MatchScreen
-        session={activeSession}
-        seat={activeSeat}
-        onMenu={leaveSeatWindow}
-        playerTwoUrl={
-          activeSeat === 0 && hostUrls ? hostUrls[1] : null
-        }
-        playerTwoNeedsOpen={
-          activeSeat === 0 && !playerTwoTabOpened
-        }
-        onOpenPlayerTwo={activeSeat === 0 ? openPlayerTwoTab : undefined}
-      />
-    );
-  }
+  const goAuthenticated = (next: AuthSession) => {
+    setSession(next);
+    if (authReturn === "mode-select") {
+      setScreen("mode-select");
+    } else if (authReturn === "army-create") {
+      setReturnAfterArmy("menu");
+      setActiveArmy(null);
+      setScreen("army-create");
+    } else {
+      setScreen(authReturn);
+    }
+  };
 
-  if (bootError) {
-    return (
-      <div className="local-boot-error">
-        <p>{bootError}</p>
-        <button
-          type="button"
-          onClick={() => {
-            clearLocalMatchRoute();
-            window.location.href = window.location.pathname;
-          }}
-        >
-          На главную
-        </button>
-      </div>
-    );
+  const recordMatchIfNeeded = (
+    result: "victory" | "defeat" | "draw",
+    summary: { turnCount: number; durationMs: number },
+  ) => {
+    const current = AuthService.getSession();
+    if (!current || !activeArmy) {
+      return;
+    }
+    const opponentLabel =
+      opponentMode === "ai"
+        ? `ИИ (${AI_DIFFICULTY_LABELS[aiDifficulty]})`
+        : "Hotseat P2";
+    MatchHistoryService.record({
+      userId: current.userId,
+      opponentLabel,
+      result,
+      armyId: activeArmy.id,
+      armyName: activeArmy.name,
+      factionId: activeArmy.factionId,
+      durationMs: summary.durationMs,
+      turnCount: summary.turnCount,
+      mode: opponentMode,
+    });
+    setLastMatch({
+      army: activeArmy,
+      mode: opponentMode,
+      difficulty: aiDifficulty,
+      startedAt: Date.now() - summary.durationMs,
+      turnCount: summary.turnCount,
+      durationMs: summary.durationMs,
+      result,
+    });
+  };
+
+  if (booting) {
+    return <LoadingScreen onComplete={finishBoot} />;
   }
 
   if (screen === "menu") {
-    return <MainMenu onNavigate={setScreen} />;
-  }
-
-  if (screen === "play") {
     return (
-      <PlayScreen
-        onBack={() => setScreen("menu")}
-        onStartClassicOffline={() => setScreen("match-setup")}
+      <MainMenuScreen
+        playerName={session?.displayName ?? null}
+        onPlay={() => requireAuth("mode-select")}
+        onCreateArmy={() => {
+          setReturnAfterArmy("menu");
+          setActiveArmy(null);
+          requireAuth("army-create");
+        }}
+        onProfile={() => requireAuth("profile")}
+        onMyArmies={() => requireAuth("my-armies")}
+        onMatchHistory={() => requireAuth("match-history")}
+        onCollection={() => setScreen("collection")}
+        onSettings={() => setScreen("settings")}
       />
     );
   }
 
-  if (screen === "armies") {
-    return <ArmiesScreen onBack={() => setScreen("menu")} />;
+  if (screen === "auth") {
+    return (
+      <AuthScreen
+        onBack={() => setScreen("menu")}
+        onAuthenticated={goAuthenticated}
+      />
+    );
+  }
+
+  if (screen === "profile" && session) {
+    return (
+      <ProfileScreen
+        session={session}
+        onBack={() => setScreen("menu")}
+        onLogout={() => {
+          setSession(null);
+          setScreen("menu");
+        }}
+        onHistory={() => setScreen("match-history")}
+        onArmies={() => setScreen("my-armies")}
+      />
+    );
+  }
+
+  if (screen === "my-armies" && session) {
+    return (
+      <MyArmiesScreen
+        session={session}
+        onBack={() => setScreen("menu")}
+        onCreate={() => {
+          setReturnAfterArmy("menu");
+          setActiveArmy(null);
+          setScreen("army-create");
+        }}
+        onEdit={(army) => {
+          setActiveArmy(army);
+          setReturnAfterArmy("menu");
+          setScreen("army-create");
+        }}
+        onPlay={(army) => {
+          setActiveArmy(army);
+          setReturnAfterArmy("match");
+          setScreen("mode-select");
+        }}
+      />
+    );
+  }
+
+  if (screen === "match-history" && session) {
+    return (
+      <MatchHistoryScreen
+        session={session}
+        onBack={() => setScreen("menu")}
+      />
+    );
+  }
+
+  if (screen === "mode-select") {
+    return (
+      <ModeSelectScreen
+        onBack={() => setScreen("menu")}
+        onSelectMode={(mode) => {
+          setModeStub(mode);
+          setScreen("mode-stub");
+        }}
+      />
+    );
+  }
+
+  if (screen === "mode-stub") {
+    return (
+      <ModeStubScreen
+        mode={modeStub}
+        difficulty={aiDifficulty}
+        onDifficultyChange={setAiDifficulty}
+        onBack={() => setScreen("mode-select")}
+        onContinue={() => {
+          setReturnAfterArmy("match");
+          if (activeArmy) {
+            setScreen("army-ready");
+          } else {
+            setActiveArmy(null);
+            setScreen("army-create");
+          }
+        }}
+      />
+    );
+  }
+
+  if (screen === "army-create") {
+    return (
+      <ArmyBuilderScreen
+        initialArmy={activeArmy}
+        ownerId={session?.userId ?? null}
+        onBack={() =>
+          setScreen(returnAfterArmy === "match" ? "mode-stub" : "menu")
+        }
+        onSaved={(army) => {
+          setActiveArmy(army);
+          setScreen("army-ready");
+        }}
+        onStartBattle={(army) => {
+          setActiveArmy(army);
+          setReturnAfterArmy("match");
+          setScreen("match");
+        }}
+      />
+    );
+  }
+
+  if (screen === "army-ready" && activeArmy) {
+    return (
+      <ArmyReadyScreen
+        army={activeArmy}
+        onEdit={() => setScreen("army-create")}
+        onMenu={() => setScreen("menu")}
+        onContinue={() => {
+          setReturnAfterArmy("match");
+          setScreen("match");
+        }}
+      />
+    );
+  }
+
+  if (screen === "match" && activeArmy) {
+    return (
+      <BattleScreen
+        key={`${activeArmy.id}-${activeArmy.updatedAt}-${opponentMode}-${aiDifficulty}`}
+        playerArmy={activeArmy}
+        opponentMode={opponentMode}
+        aiDifficulty={aiDifficulty}
+        onMenu={() => setScreen("menu")}
+        onVictory={(summary) => {
+          recordMatchIfNeeded("victory", summary);
+          setScreen("victory");
+        }}
+        onDefeat={(summary) => {
+          recordMatchIfNeeded("defeat", summary);
+          setScreen("defeat");
+        }}
+      />
+    );
+  }
+
+  if (screen === "victory" || screen === "defeat") {
+    return (
+      <ResultScreen
+        outcome={screen}
+        match={lastMatch}
+        onRetry={() => {
+          setReturnAfterArmy("match");
+          setScreen("army-create");
+        }}
+        onMenu={() => setScreen("menu")}
+      />
+    );
+  }
+
+  if (screen === "collection") {
+    return <CollectionStubScreen onBack={() => setScreen("menu")} />;
   }
 
   if (screen === "settings") {
-    return <SettingsScreen onBack={() => setScreen("menu")} />;
+    return <SettingsStubScreen onBack={() => setScreen("menu")} />;
   }
 
-  if (screen === "match-setup") {
-    return (
-      <MatchSetupScreen
-        onBack={() => setScreen("play")}
-        onStart={startLocalDual}
-      />
-    );
-  }
-
-  if (screen === "local-match-host" && hostSessionId && hostUrls) {
-    return (
-      <LocalMatchHostScreen
-        sessionId={hostSessionId}
-        urls={hostUrls}
-        opened={[true, playerTwoTabOpened]}
-        onReopen={() => {
-          const launch = launchLocalMatchWindows(hostSessionId);
-          setHostUrls(launch.urls);
-          setPlayerTwoTabOpened(launch.opened[1]);
-        }}
-        onOpenPlayerTwo={openPlayerTwoTab}
-        onContinueAsPlayerOne={() => {
-          const session =
-            activeSession ?? joinLocalMatchSession(hostSessionId);
-          if (!session) {
-            return;
-          }
-          window.history.replaceState(
-            {},
-            "",
-            buildLocalMatchWindowUrl(hostSessionId, 0),
-          );
-          setActiveSession(session);
-          setActiveSeat(0);
-          setScreen("match");
-        }}
-        onMenu={leaveHost}
-      />
-    );
-  }
-
-  return <MainMenu onNavigate={setScreen} />;
+  return (
+    <MainMenuScreen
+      playerName={session?.displayName ?? null}
+      onPlay={() => requireAuth("mode-select")}
+      onCreateArmy={() => {
+        setReturnAfterArmy("menu");
+        setActiveArmy(null);
+        requireAuth("army-create");
+      }}
+      onProfile={() => requireAuth("profile")}
+      onMyArmies={() => requireAuth("my-armies")}
+      onMatchHistory={() => requireAuth("match-history")}
+      onCollection={() => setScreen("collection")}
+      onSettings={() => setScreen("settings")}
+    />
+  );
 }
 
 export default App;

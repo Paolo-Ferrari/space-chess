@@ -1,0 +1,86 @@
+.edgerunner-hire__meta {
+  margin: 0 0 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--cp-cyan);
+}
+
+.edgerunner-hire__section {
+  margin-top: 12px;
+}
+
+.edgerunner-hire__section h4 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cp-magenta);
+}
+
+.edgerunner-hire__hint {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.edgerunner-hire__hired,
+.edgerunner-hire__pool {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.edgerunner-hire__hired button,
+.edgerunner-hire__pool button {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 42, 109, 0.35);
+  background: rgba(255, 42, 109, 0.06);
+  color: var(--text-main);
+  text-align: left;
+  cursor: pointer;
+  clip-path: var(--clip-btn);
+}
+
+.edgerunner-hire__hired button {
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.edgerunner-hire__hired span,
+.edgerunner-hire__hired em,
+.edgerunner-hire__pool em {
+  font-style: normal;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.edgerunner-hire__main {
+  display: grid;
+  gap: 2px;
+}
+
+.edgerunner-hire__role {
+  font-family: var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cp-magenta) !important;
+}
+
+.edgerunner-hire__cost {
+  font-family: var(--font-mono);
+  color: var(--cp-yellow);
+  white-space: nowrap;
+}
+
+.edgerunner-hire__pool button.is-disabled,
+.edgerunner-hire__pool button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}

@@ -1,0 +1,52 @@
+.tutorial-banner {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 40;
+  width: min(340px, calc(100vw - 32px));
+  padding: 16px;
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  background: rgba(5, 5, 10, 0.92);
+  box-shadow: 0 0 40px rgba(0, 240, 255, 0.12);
+  clip-path: var(--clip-panel);
+  animation: oc-slide-in var(--transition-soft) both;
+}
+
+.tutorial-banner__kicker {
+  margin: 0 0 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--brand-cyan);
+}
+
+.tutorial-banner h3 {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--brand-yellow);
+}
+
+.tutorial-banner p {
+  margin: 0 0 14px;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.tutorial-banner__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 640px) {
+  .tutorial-banner {
+    right: 12px;
+    left: 12px;
+    bottom: 12px;
+    width: auto;
+  }
+}

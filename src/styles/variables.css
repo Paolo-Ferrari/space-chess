@@ -12,6 +12,12 @@
   --cp-cyan: #00f0ff;
   --cp-orange: #ff6a00;
 
+  /* Brand aliases (Overclock Protocol) */
+  --brand-yellow: var(--cp-yellow);
+  --brand-magenta: var(--cp-magenta);
+  --brand-cyan: var(--cp-cyan);
+  --brand-orange: var(--cp-orange);
+
   --glass-border: rgba(252, 238, 10, 0.35);
   --energy: var(--cp-yellow);
   --accent-neon: var(--cp-yellow);

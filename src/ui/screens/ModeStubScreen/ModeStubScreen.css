@@ -1,0 +1,56 @@
+.mode-stub__ai {
+  margin-bottom: 20px;
+}
+
+.mode-stub__lead {
+  margin: 0 0 16px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.mode-stub__label {
+  margin: 0 0 8px;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cp-cyan);
+}
+
+.mode-stub__difficulties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.mode-stub__diff {
+  min-width: 96px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--text-main);
+  cursor: pointer;
+  clip-path: var(--clip-btn);
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+.mode-stub__diff.is-active {
+  border-color: var(--cp-yellow);
+  background: rgba(252, 238, 10, 0.1);
+  color: var(--cp-yellow);
+}
+
+.mode-stub__hints {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.mode-stub__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}

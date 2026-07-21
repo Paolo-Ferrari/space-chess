@@ -1,0 +1,60 @@
+.battle-fx {
+  --bw: 8;
+  --bh: 8;
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--bw), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--bh), minmax(0, 1fr));
+  gap: 3px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.battle-fx__burst {
+  position: relative;
+  display: block;
+  border-radius: 50%;
+  margin: auto;
+  width: 70%;
+  aspect-ratio: 1;
+}
+
+.battle-fx__burst.is-strike {
+  background: radial-gradient(circle, var(--fx-attack), transparent 70%);
+  animation: oc-strike 0.4s ease-out forwards;
+}
+
+.battle-fx__burst.is-heavy {
+  background: radial-gradient(circle, var(--fx-heavy), transparent 65%);
+  animation: oc-strike 0.45s ease-out forwards;
+  box-shadow: 0 0 16px var(--fx-heavy);
+}
+
+.battle-fx__burst.is-heal {
+  background: radial-gradient(circle, var(--fx-heal), transparent 70%);
+  animation: oc-heal-rise 0.5s ease-out forwards;
+}
+
+.battle-fx__burst.is-hack {
+  background:
+    repeating-linear-gradient(
+      45deg,
+      var(--fx-hack),
+      var(--fx-hack) 2px,
+      transparent 2px,
+      transparent 6px
+    );
+  animation: oc-hack-flow 0.45s linear forwards;
+}
+
+.battle-fx__burst.is-shield {
+  border: 2px solid var(--fx-shield);
+  background: transparent;
+  animation: oc-shield-ring 0.5s ease-out forwards;
+}
+
+.battle-fx__burst.is-destroy {
+  background: radial-gradient(circle, #fff, var(--fx-attack) 40%, transparent 70%);
+  animation: oc-shutdown 0.5s ease-in forwards;
+}

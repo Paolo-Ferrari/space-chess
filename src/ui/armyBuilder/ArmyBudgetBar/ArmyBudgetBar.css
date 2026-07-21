@@ -1,0 +1,60 @@
+.army-budget-bar {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+}
+
+.army-budget-bar__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.army-budget-bar__meta strong {
+  color: var(--brand-yellow);
+}
+
+.army-budget-bar.is-over .army-budget-bar__meta strong {
+  color: var(--brand-magenta);
+}
+
+.army-budget-bar__track {
+  height: 6px;
+  border: 1px solid rgba(252, 238, 10, 0.35);
+  background: rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.army-budget-bar__track span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--brand-cyan),
+    var(--brand-yellow)
+  );
+  transition: width 120ms ease;
+}
+
+.army-budget-bar.is-warn .army-budget-bar__track span {
+  background: linear-gradient(90deg, var(--brand-yellow), var(--brand-orange));
+}
+
+.army-budget-bar.is-over .army-budget-bar__track span {
+  background: var(--brand-magenta);
+}
+
+.army-budget-bar__alert {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--brand-magenta);
+}
+
+.army-budget-bar__alert--warn {
+  color: var(--brand-yellow);
+}

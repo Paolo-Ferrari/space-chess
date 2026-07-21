@@ -1,0 +1,45 @@
+.stat-compare__hint {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.stat-compare {
+  display: grid;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.stat-compare__head,
+.stat-compare__row {
+  display: grid;
+  grid-template-columns: 0.8fr 1fr 1fr;
+  gap: 8px;
+}
+
+.stat-compare__head {
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10px;
+  margin-bottom: 4px;
+}
+
+.stat-compare__row span {
+  color: var(--text-muted);
+}
+
+.stat-compare__row strong {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.stat-compare__row strong.is-better {
+  color: #7dffb3;
+}
+
+.stat-compare__row strong.is-worse {
+  color: var(--brand-magenta);
+}

@@ -1,0 +1,20 @@
+.unit-info__name {
+  margin: 0 0 10px;
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cp-cyan);
+}
+
+.unit-info__list {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.unit-info__empty {
+  margin: 0;
+  color: var(--text-muted);
+}

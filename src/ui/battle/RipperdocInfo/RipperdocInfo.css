@@ -1,0 +1,76 @@
+.ripperdoc-info__name {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cp-cyan);
+}
+
+.ripperdoc-info__desc {
+  margin: 0 0 12px;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.ripperdoc-info__meta {
+  margin: 0 0 12px;
+  display: grid;
+  gap: 6px;
+}
+
+.ripperdoc-info__meta div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.ripperdoc-info__meta dt {
+  color: var(--text-muted);
+}
+
+.ripperdoc-info__meta dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  color: var(--cp-yellow);
+}
+
+.ripperdoc-info__actions {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.ripperdoc-info__actions li {
+  display: grid;
+  gap: 2px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.ripperdoc-info__actions li.is-reserved {
+  opacity: 0.5;
+}
+
+.ripperdoc-info__actions strong {
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ripperdoc-info__actions span {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--cp-cyan);
+}
+
+.ripperdoc-info__actions em {
+  font-style: normal;
+  font-size: 12px;
+  color: var(--text-muted);
+}

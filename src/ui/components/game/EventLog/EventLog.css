@@ -1,0 +1,22 @@
+.event-log .panel__body {
+  max-height: 180px;
+  overflow: auto;
+}
+
+.event-log__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.event-log__list li {
+  padding: 8px 10px;
+  border-left: 2px solid rgba(0, 240, 255, 0.45);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.4;
+}

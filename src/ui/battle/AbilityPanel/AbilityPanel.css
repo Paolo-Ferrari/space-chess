@@ -1,0 +1,67 @@
+.ability-panel__empty {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.ability-panel__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.ability-panel__item {
+  width: 100%;
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--text-main);
+  text-align: left;
+  cursor: pointer;
+}
+
+.ability-panel__item.is-active {
+  border-color: var(--cp-cyan);
+  box-shadow: inset 0 0 0 1px rgba(0, 240, 255, 0.35);
+  background: rgba(0, 240, 255, 0.1);
+}
+
+.ability-panel__item.is-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ability-panel__name {
+  font-family: var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 14px;
+  color: var(--cp-yellow);
+}
+
+.ability-panel__meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.ability-panel__reason {
+  font-size: 11px;
+  color: var(--cp-magenta);
+}
+
+.ability-panel__hint {
+  margin-top: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.ability-panel__hint p {
+  margin: 0;
+  color: var(--cp-cyan);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}

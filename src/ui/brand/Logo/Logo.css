@@ -1,0 +1,126 @@
+.oc-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--text-main);
+}
+
+.oc-logo__mark {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  filter: drop-shadow(0 0 10px var(--glow-soft));
+}
+
+.oc-logo--sm .oc-logo__mark {
+  width: 28px;
+  height: 28px;
+}
+
+.oc-logo--md .oc-logo__mark {
+  width: 48px;
+  height: 48px;
+}
+
+.oc-logo--lg .oc-logo__mark {
+  width: 72px;
+  height: 72px;
+}
+
+.oc-logo--hero .oc-logo__mark {
+  width: 96px;
+  height: 96px;
+}
+
+.oc-logo__plate {
+  fill: var(--brand-cyan);
+}
+
+.oc-logo__circuit,
+.oc-logo__stroke,
+.oc-logo__surge,
+.oc-logo__scan {
+  fill: none;
+}
+
+.oc-logo__text {
+  display: grid;
+  gap: 4px;
+  text-align: left;
+}
+
+.oc-logo__wordmark {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.55em;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--brand-yellow);
+}
+
+.oc-logo__wordmark em {
+  font-style: normal;
+  color: var(--brand-cyan);
+  text-shadow: 0 0 18px rgba(0, 240, 255, 0.35);
+}
+
+.oc-logo--sm .oc-logo__wordmark {
+  font-size: 1rem;
+}
+
+.oc-logo--lg .oc-logo__wordmark {
+  font-size: 2rem;
+}
+
+.oc-logo--hero .oc-logo__wordmark {
+  font-size: clamp(2rem, 5vw, 2.8rem);
+}
+
+.oc-logo__product {
+  display: grid;
+  gap: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.72em;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.oc-logo__product span:last-child {
+  color: var(--brand-magenta);
+}
+
+/* Monochrome — docs / boot / print */
+.oc-logo--mono .oc-logo__circuit,
+.oc-logo--mono .oc-logo__stroke,
+.oc-logo--mono .oc-logo__surge,
+.oc-logo--mono .oc-logo__scan {
+  stroke: currentColor;
+}
+
+.oc-logo--mono .oc-logo__node,
+.oc-logo--mono .oc-logo__core,
+.oc-logo--mono .oc-logo__body,
+.oc-logo--mono .oc-logo__plate {
+  fill: currentColor;
+}
+
+.oc-logo--mono .oc-logo__plate {
+  opacity: 0.12;
+}
+
+.oc-logo--mono .oc-logo__wordmark,
+.oc-logo--mono .oc-logo__wordmark em,
+.oc-logo--mono .oc-logo__product span:last-child {
+  color: currentColor;
+  text-shadow: none;
+}
+
+.oc-logo--mono {
+  color: var(--text-main);
+}
+
+.oc-logo--mark-only {
+  gap: 0;
+}

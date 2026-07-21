@@ -1,0 +1,126 @@
+.unit-token {
+  --unit-accent: var(--brand-cyan);
+  --unit-glow: rgba(0, 240, 255, 0.4);
+  display: grid;
+  place-items: center;
+  gap: 1px;
+  width: 100%;
+  height: 100%;
+  padding: 3px 2px;
+  position: relative;
+  transition: transform var(--transition-soft), filter var(--transition-snap);
+}
+
+.unit-token__silhouette {
+  font-size: clamp(13px, 2vw, 20px);
+  line-height: 1;
+  color: var(--unit-accent);
+  text-shadow: 0 0 10px var(--unit-glow);
+  transition: transform var(--transition-soft);
+}
+
+.unit-token.is-owner-1 .unit-token__silhouette {
+  filter: hue-rotate(-15deg) saturate(1.1);
+}
+
+.unit-token__hpbar {
+  width: 78%;
+  height: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+.unit-token__hpbar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--unit-accent), #7dffb3);
+  transition: width 180ms ease;
+}
+
+.unit-token__hp {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-main);
+  letter-spacing: 0.04em;
+}
+
+.unit-token__status {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  display: flex;
+  gap: 1px;
+}
+
+.unit-token__status em {
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 7px;
+  padding: 0 2px;
+  background: rgba(180, 77, 255, 0.35);
+  color: #e8d6ff;
+}
+
+.unit-token__legend {
+  position: absolute;
+  bottom: 1px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 6px;
+  letter-spacing: 0.14em;
+  color: var(--brand-magenta);
+  text-shadow: 0 0 8px rgba(255, 42, 109, 0.6);
+}
+
+.unit-token.is-legendary .unit-token__silhouette {
+  font-size: clamp(16px, 2.4vw, 24px);
+}
+
+.unit-token.is-smasher {
+  transform: scale(1.08);
+}
+
+.unit-token.is-smasher .unit-token__silhouette {
+  font-size: clamp(18px, 2.6vw, 26px);
+  color: #ff4d6a;
+  text-shadow:
+    0 0 12px rgba(255, 42, 109, 0.7),
+    0 0 22px rgba(252, 238, 10, 0.35);
+  animation: oc-pulse 2.2s ease-in-out infinite;
+}
+
+.unit-token.is-selected .unit-token__silhouette {
+  transform: translateY(-1px) scale(1.08);
+}
+
+.unit-token.is-damaged {
+  animation: oc-strike 0.35s ease-out;
+  filter: brightness(1.5);
+}
+
+.unit-token.is-destroying {
+  animation: oc-shutdown 0.45s ease-in forwards;
+}
+
+/* Faction mood accents on token chrome */
+.unit-token.faction-arasaka .unit-token__hpbar span {
+  background: linear-gradient(90deg, #fcee0a, #ff6a00);
+}
+
+.unit-token.faction-maelstrom .unit-token__silhouette {
+  text-shadow: 0 0 12px rgba(255, 42, 109, 0.7);
+}
+
+.unit-token.faction-voodoo-boys .unit-token__status em {
+  background: rgba(180, 77, 255, 0.55);
+}
+
+.unit-token.faction-nomads .unit-token__hpbar span {
+  background: linear-gradient(90deg, #e8a54b, #fcee0a);
+}
+
+.unit-token.faction-militech .unit-token__hpbar span {
+  background: linear-gradient(90deg, #6b8cff, #00f0ff);
+}

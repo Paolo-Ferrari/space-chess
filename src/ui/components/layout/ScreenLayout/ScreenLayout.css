@@ -1,0 +1,27 @@
+.screen-layout {
+  box-sizing: border-box;
+  min-height: 100vh;
+  width: 100%;
+  padding: clamp(16px, 3vw, 36px);
+  display: grid;
+  place-items: center;
+  overflow: auto;
+}
+
+.screen-layout__frame {
+  width: min(920px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.screen-layout--wide .screen-layout__frame {
+  width: min(1280px, 100%);
+}
+
+@media (max-width: 900px) {
+  .screen-layout {
+    place-items: stretch;
+    padding: 14px;
+  }
+}
