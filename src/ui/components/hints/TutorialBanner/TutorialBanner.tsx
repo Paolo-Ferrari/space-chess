@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import GameButton from "../../buttons/GameButton/GameButton";
+import GameButton from "@/ui/components/buttons/GameButton/GameButton";
 
 import "./TutorialBanner.css";
 

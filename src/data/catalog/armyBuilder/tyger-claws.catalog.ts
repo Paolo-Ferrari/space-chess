@@ -1,6 +1,6 @@
 import type {
   FactionDefinition,
-  UnitDefinition,
+  UnitCatalogEntry,
 } from "../../../domain/armyBuilder/types";
 
 /**
@@ -15,7 +15,7 @@ export const TYGER_CLAWS_FACTION: FactionDefinition = {
     "Скорость, скрытность и ближний бой. Манёвры и быстрые удары.",
 };
 
-export const TYGER_CLAWS_UNITS: UnitDefinition[] = [
+export const TYGER_CLAWS_UNITS: UnitCatalogEntry[] = [
   {
     id: "tyger-claws-commander",
     factionId: TYGER_CLAWS_FACTION.id,

@@ -1,0 +1,9 @@
+/** ncpd faction board icons */
+export { Icon_NcpdCommander } from "./ncpd-commander";
+export { Icon_NcpdRipperdoc } from "./ncpd-ripperdoc";
+export { Icon_NcpdOfficer } from "./ncpd-officer";
+export { Icon_NcpdRiot } from "./ncpd-riot";
+export { Icon_NcpdMaxtac } from "./ncpd-maxtac";
+export { Icon_NcpdSniper } from "./ncpd-sniper";
+export { Icon_NcpdDrone } from "./ncpd-drone";
+export { Icon_NcpdLegendary } from "./ncpd-legendary";

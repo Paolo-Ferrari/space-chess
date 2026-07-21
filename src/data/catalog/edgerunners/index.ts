@@ -1,5 +1,6 @@
 import type { UnitDefinition } from "../../../domain/armyBuilder/types";
 import type { EdgerunnerDefinition } from "../../../domain/edgerunner/types";
+import { defineUnit } from "../units/defineUnit";
 
 import {
   TEST_EDGERUNNER_PROFILES,
@@ -7,7 +8,7 @@ import {
 } from "./testEdgerunners.catalog";
 
 const PROFILES: EdgerunnerDefinition[] = [...TEST_EDGERUNNER_PROFILES];
-const UNITS: UnitDefinition[] = [...TEST_EDGERUNNER_UNITS];
+const UNITS: UnitDefinition[] = TEST_EDGERUNNER_UNITS.map(defineUnit);
 
 const profileById = new Map(PROFILES.map((p) => [p.id, p]));
 const profileByUnitId = new Map(

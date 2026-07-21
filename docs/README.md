@@ -4,6 +4,9 @@
 
 **Бренд:** [`03_ux/BrandIdentity.md`](03_ux/BrandIdentity.md) · код: `src/brand/brand.config.ts`
 
+**Как расширять проект (юниты, поля, режимы, победа, визуал):**  
+[`04_engineering/ExtensionGuide.md`](04_engineering/ExtensionGuide.md) · код-фасад: `src/content/`
+
 **Код в документации не пишется.** Игровые числа, юниты и баланс появляются только после утверждения в профильных docs.
 
 ---
@@ -60,6 +63,7 @@ docs/
 │   └── Localization.md
 ├── 04_engineering/
 │   ├── Architecture.md                Общая архитектура (канон)
+│   ├── ExtensionGuide.md              Как добавлять юниты / карты / режимы
 │   ├── CoreStabilizationAudit.md      Аудит ядра + контракты расширения
 │   ├── AbilitySystem.md               Универсальная система способностей
 │   ├── RipperdocSystem.md             Система риппердоков (support role)

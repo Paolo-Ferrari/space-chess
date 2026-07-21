@@ -6,6 +6,7 @@ import {
   type ImplantInstallReject,
 } from "../../../domain/commander/commanderSystem";
 import { UnitSystem } from "../../../domain/unit/unitSystem";
+import UnitPortrait from "../../components/game/UnitPortrait/UnitPortrait";
 import Panel from "../../components/panels/Panel/Panel";
 
 import ImplantPanel from "../ImplantPanel/ImplantPanel";
@@ -83,9 +84,11 @@ function CommanderPanel({
       className="commander-panel"
     >
       <div className="commander-panel__identity">
-        <div className="commander-panel__portrait" aria-hidden>
-          <span>{unit.name.slice(0, 2).toUpperCase()}</span>
-        </div>
+        <UnitPortrait
+          unit={unit}
+          size="lg"
+          className="commander-panel__portrait"
+        />
         <div>
           <p>{profile.description}</p>
           <p className="commander-panel__slots">

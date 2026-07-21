@@ -874,12 +874,13 @@ for (const f of factions) {
     path.join(armyDir, `${f.key}.catalog.ts`),
     `import type {
   FactionDefinition,
-  UnitDefinition,
+  UnitCatalogEntry,
 } from "../../../domain/armyBuilder/types";
 
 /**
  * ${f.name} — catalog data only.
  * Style: ${f.style}
+ * Art/rarity filled by defineUnit in the game database registry.
  */
 export const ${CN}_FACTION: FactionDefinition = {
   id: "${f.id}",
@@ -889,7 +890,7 @@ export const ${CN}_FACTION: FactionDefinition = {
     "${f.description}",
 };
 
-export const ${CN}_UNITS: UnitDefinition[] = [
+export const ${CN}_UNITS: UnitCatalogEntry[] = [
 ${unitsCode.join("\n")}
 ];
 `,

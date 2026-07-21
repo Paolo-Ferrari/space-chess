@@ -1,0 +1,9 @@
+/** maelstrom faction board icons */
+export { Icon_MaelstromCommander } from "./maelstrom-commander";
+export { Icon_MaelstromRipperdoc } from "./maelstrom-ripperdoc";
+export { Icon_MaelstromGanger } from "./maelstrom-ganger";
+export { Icon_MaelstromBerserker } from "./maelstrom-berserker";
+export { Icon_MaelstromChrome } from "./maelstrom-chrome";
+export { Icon_MaelstromShotgun } from "./maelstrom-shotgun";
+export { Icon_MaelstromGlitch } from "./maelstrom-glitch";
+export { Icon_MaelstromLegendary } from "./maelstrom-legendary";

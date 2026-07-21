@@ -26,18 +26,13 @@
   cursor: not-allowed;
 }
 
-.drag-unit__portrait {
-  display: grid;
-  place-items: center;
+.drag-unit__portrait.unit-portrait {
   width: 40px;
   height: 40px;
-  flex-shrink: 0;
-  border: 1px solid rgba(0, 240, 255, 0.35);
-  background: rgba(0, 240, 255, 0.08);
-  font-family: var(--font-display);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--brand-cyan);
+}
+
+.drag-unit.is-legendary .drag-unit__portrait {
+  border-color: rgba(252, 238, 10, 0.55);
 }
 
 .drag-unit__body {

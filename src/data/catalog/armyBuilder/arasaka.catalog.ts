@@ -1,12 +1,13 @@
 import type {
   FactionDefinition,
-  UnitDefinition,
+  UnitCatalogEntry,
 } from "../../../domain/armyBuilder/types";
+import { unitImagePath } from "../../assets/unitArt";
 
 /**
  * Arasaka — эталонная фракция каталога.
- * Стиль: элита, дорого, качество вместо количества.
- * Combat / abilities — позже (abilities: []).
+ * Полные записи game DB: статы + art path + rarity.
+ * Замена арта: заменить PNG в public/assets/units/ без правок логики.
  */
 export const ARASAKA_FACTION: FactionDefinition = {
   id: "faction-arasaka",
@@ -16,7 +17,7 @@ export const ARASAKA_FACTION: FactionDefinition = {
     "Элитная корпорация Night City. Меньше бойцов на поле — каждый стоит дорого и опасен. Дисциплина, кибернетика, технологическое превосходство.",
 };
 
-export const ARASAKA_UNITS: UnitDefinition[] = [
+export const ARASAKA_UNITS: UnitCatalogEntry[] = [
   {
     id: "arasaka-commander",
     factionId: ARASAKA_FACTION.id,
@@ -27,6 +28,9 @@ export const ARASAKA_UNITS: UnitDefinition[] = [
     description:
       "Командир корпоративного отряда. Центр дисциплины и цель победы. Единственный носитель имплантов.",
     abilities: [],
+    imagePath: unitImagePath("arasaka-commander"),
+    rarity: "epic",
+    isLegendary: false,
   },
   {
     id: "arasaka-ripperdoc",
@@ -38,6 +42,9 @@ export const ARASAKA_UNITS: UnitDefinition[] = [
     description:
       "Элитный риппердок корпорации. Не штурмовик — полевой клиницист: лечение и протоколы брони в радиусе поддержки. Профиль: Ripperdoc System → ripperdoc-arasaka.",
     abilities: ["ability-heal", "ability-armor-boost"],
+    imagePath: unitImagePath("arasaka-ripperdoc"),
+    rarity: "uncommon",
+    isLegendary: false,
   },
   {
     id: "arasaka-soldier",
@@ -49,6 +56,9 @@ export const ARASAKA_UNITS: UnitDefinition[] = [
     description:
       "Базовый солдат корпорации. Дороже уличной пехоты — лучше экипирован и обучен.",
     abilities: [],
+    imagePath: unitImagePath("arasaka-soldier"),
+    rarity: "common",
+    isLegendary: false,
   },
   {
     id: "arasaka-elite",
@@ -60,6 +70,9 @@ export const ARASAKA_UNITS: UnitDefinition[] = [
     description:
       "Элитный солдат. Усиленная броня и огневая подготовка. Ядро «дорогой» линии Arasaka.",
     abilities: [],
+    imagePath: unitImagePath("arasaka-elite"),
+    rarity: "uncommon",
+    isLegendary: false,
   },
   {
     id: "arasaka-cyber-ninja",
@@ -71,6 +84,9 @@ export const ARASAKA_UNITS: UnitDefinition[] = [
     description:
       "Киберниндзя: скорость и ударная точность. Меньше живучести — выше угроза на клетку.",
     abilities: ["ability-slow"],
+    imagePath: unitImagePath("arasaka-cyber-ninja"),
+    rarity: "rare",
+    isLegendary: false,
   },
   {
     id: "arasaka-heavy",
@@ -82,6 +98,9 @@ export const ARASAKA_UNITS: UnitDefinition[] = [
     description:
       "Тяжёлый боевой юнит. Медленный, дорогой, держит фронт и продавливает позиции.",
     abilities: [],
+    imagePath: unitImagePath("arasaka-heavy"),
+    rarity: "rare",
+    isLegendary: false,
   },
   {
     id: "arasaka-recon",
@@ -93,6 +112,9 @@ export const ARASAKA_UNITS: UnitDefinition[] = [
     description:
       "Разведывательный оперативник. Дальность и мобильность для контроля зоны до удара элиты.",
     abilities: [],
+    imagePath: unitImagePath("arasaka-recon"),
+    rarity: "uncommon",
+    isLegendary: false,
   },
   {
     id: "arasaka-adam-smasher",
@@ -104,5 +126,8 @@ export const ARASAKA_UNITS: UnitDefinition[] = [
     description:
       "Легендарный киборг-штурмовик Arasaka. Прототип класса «living weapon»: крайне дорог, крайне живуч, крайне опасен.",
     abilities: ["ability-power-strike"],
+    imagePath: unitImagePath("arasaka-adam-smasher"),
+    rarity: "legendary",
+    isLegendary: true,
   },
 ];

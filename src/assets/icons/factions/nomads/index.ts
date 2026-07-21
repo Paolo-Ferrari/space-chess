@@ -1,0 +1,9 @@
+/** nomads faction board icons */
+export { Icon_NomadsCommander } from "./nomads-commander";
+export { Icon_NomadsRipperdoc } from "./nomads-ripperdoc";
+export { Icon_NomadsScout } from "./nomads-scout";
+export { Icon_NomadsRider } from "./nomads-rider";
+export { Icon_NomadsTech } from "./nomads-tech";
+export { Icon_NomadsBuggy } from "./nomads-buggy";
+export { Icon_NomadsSniper } from "./nomads-sniper";
+export { Icon_NomadsLegendary } from "./nomads-legendary";

@@ -1,6 +1,6 @@
 import type {
   FactionDefinition,
-  UnitDefinition,
+  UnitCatalogEntry,
 } from "../../../domain/armyBuilder/types";
 
 /**
@@ -15,7 +15,7 @@ export const MAELSTROM_FACTION: FactionDefinition = {
     "Кибернетическое безумие. Агрессия, риск и нестабильные усиления.",
 };
 
-export const MAELSTROM_UNITS: UnitDefinition[] = [
+export const MAELSTROM_UNITS: UnitCatalogEntry[] = [
   {
     id: "maelstrom-commander",
     factionId: MAELSTROM_FACTION.id,

@@ -1,6 +1,6 @@
 import type {
   FactionDefinition,
-  UnitDefinition,
+  UnitCatalogEntry,
 } from "../../../domain/armyBuilder/types";
 
 /**
@@ -15,7 +15,7 @@ export const NOMADS_FACTION: FactionDefinition = {
     "Мобильность, техника и адаптация. Гибкая тактика и перемещение.",
 };
 
-export const NOMADS_UNITS: UnitDefinition[] = [
+export const NOMADS_UNITS: UnitCatalogEntry[] = [
   {
     id: "nomads-commander",
     factionId: NOMADS_FACTION.id,

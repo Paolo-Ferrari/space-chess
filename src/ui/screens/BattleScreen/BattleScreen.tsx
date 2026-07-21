@@ -505,6 +505,18 @@ function BattleScreen({
                         selected={selectedCell}
                         damaged={flashIds.has(unit.instanceId)}
                         destroying={destroyIds.has(unit.instanceId)}
+                        enemyTarget={attack || abilityTarget}
+                        healed={unit.statusEffects.some((s) =>
+                          s.statusId.includes("heal"),
+                        )}
+                        overclock={unit.statusEffects.some((s) =>
+                          s.statusId.includes("overclock"),
+                        )}
+                        disabled={unit.statusEffects.some(
+                          (s) =>
+                            s.statusId.includes("stun") ||
+                            s.statusId.includes("disable"),
+                        )}
                       />
                     ) : null}
                   </button>

@@ -1,5 +1,6 @@
 import type { UnitDefinition } from "../../../domain/armyBuilder/types";
 import { UNIT_TYPE_LABELS } from "../../../domain/armyBuilder/types";
+import UnitIcon from "../../battle/UnitIcon/UnitIcon";
 import UnitTypeBadge from "../UnitTypeBadge/UnitTypeBadge";
 
 import "./DraggableUnitCard.css";
@@ -26,13 +27,6 @@ function DraggableUnitCard({
   compact = false,
   placementId,
 }: DraggableUnitCardProps) {
-  const initials = unit.name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase();
-
   return (
     <button
       type="button"
@@ -41,6 +35,7 @@ function DraggableUnitCard({
         compact ? "drag-unit--compact" : "",
         selected ? "is-selected" : "",
         disabled ? "is-disabled" : "",
+        unit.isLegendary ? "is-legendary" : "",
       ]
         .filter(Boolean)
         .join(" ")}
@@ -60,9 +55,14 @@ function DraggableUnitCard({
         event.dataTransfer.effectAllowed = "move";
       }}
     >
-      <span className="drag-unit__portrait" aria-hidden>
-        {initials}
-      </span>
+      <UnitIcon
+        unitId={unit.id}
+        unit={unit}
+        faction={unit.factionId}
+        size={compact ? 28 : 40}
+        legendary={unit.isLegendary}
+        className="drag-unit__portrait"
+      />
       {!compact ? (
         <span className="drag-unit__body">
           <strong>{unit.name}</strong>

@@ -22,6 +22,8 @@ import ProfileScreen from "../ui/screens/ProfileScreen/ProfileScreen";
 import ResultScreen from "../ui/screens/ResultScreen/ResultScreen";
 import SettingsStubScreen from "../ui/screens/SettingsScreen/SettingsStubScreen";
 
+import { ThemeEngine } from "../theme";
+
 import type {
   AppScreen,
   AuthReturnTarget,
@@ -50,6 +52,10 @@ function App() {
     "menu",
   );
   const [activeArmy, setActiveArmy] = useState<Army | null>(null);
+  /** Live faction preview while drafting an army (before save). */
+  const [previewFactionId, setPreviewFactionId] = useState<string | null>(
+    null,
+  );
   const [session, setSession] = useState<AuthSession | null>(() =>
     AuthService.getSession(),
   );
@@ -59,6 +65,10 @@ function App() {
   useEffect(() => {
     applyDocumentBrandTitle();
   }, []);
+
+  useEffect(() => {
+    ThemeEngine.apply(previewFactionId ?? activeArmy?.factionId ?? null);
+  }, [previewFactionId, activeArmy?.factionId]);
 
   const finishBoot = useCallback(() => {
     setBooting(false);
@@ -142,6 +152,7 @@ function App() {
         onCreateArmy={() => {
           setReturnAfterArmy("menu");
           setActiveArmy(null);
+          setPreviewFactionId(null);
           requireAuth("army-create");
         }}
         onProfile={() => requireAuth("profile")}
@@ -247,15 +258,19 @@ function App() {
       <ArmyBuilderScreen
         initialArmy={activeArmy}
         ownerId={session?.userId ?? null}
-        onBack={() =>
-          setScreen(returnAfterArmy === "match" ? "mode-stub" : "menu")
-        }
+        onFactionChange={setPreviewFactionId}
+        onBack={() => {
+          setPreviewFactionId(null);
+          setScreen(returnAfterArmy === "match" ? "mode-stub" : "menu");
+        }}
         onSaved={(army) => {
           setActiveArmy(army);
+          setPreviewFactionId(army.factionId);
           setScreen("army-ready");
         }}
         onStartBattle={(army) => {
           setActiveArmy(army);
+          setPreviewFactionId(army.factionId);
           setReturnAfterArmy("match");
           setScreen("match");
         }}

@@ -1,6 +1,6 @@
 import type {
   FactionDefinition,
-  UnitDefinition,
+  UnitCatalogEntry,
 } from "../../../domain/armyBuilder/types";
 
 /**
@@ -15,7 +15,7 @@ export const NCPD_FACTION: FactionDefinition = {
     "Порядок и контроль поля. Защита, подавление и удержание зон.",
 };
 
-export const NCPD_UNITS: UnitDefinition[] = [
+export const NCPD_UNITS: UnitCatalogEntry[] = [
   {
     id: "ncpd-commander",
     factionId: NCPD_FACTION.id,

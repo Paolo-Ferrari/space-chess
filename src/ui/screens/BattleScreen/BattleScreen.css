@@ -71,39 +71,35 @@
 }
 
 .battle-board__cell.is-tile-a {
-  background:
-    linear-gradient(145deg, rgba(0, 240, 255, 0.05), transparent 55%),
-    rgba(12, 14, 20, 0.9);
+  background: var(--theme-tile-a);
 }
 
 .battle-board__cell.is-tile-b {
-  background:
-    linear-gradient(145deg, rgba(252, 238, 10, 0.04), transparent 55%),
-    rgba(8, 9, 14, 0.95);
+  background: var(--theme-tile-b);
 }
 
 .battle-board__cell.is-move {
-  background: rgba(0, 240, 255, 0.22);
+  background: var(--theme-move);
   box-shadow:
-    inset 0 0 0 1px rgba(0, 240, 255, 0.65),
-    0 0 12px rgba(0, 240, 255, 0.25);
+    inset 0 0 0 1px var(--accent-neon),
+    0 0 12px var(--glow-soft);
 }
 
 .battle-board__cell.is-attack {
-  background: rgba(255, 42, 109, 0.28);
+  background: var(--theme-attack);
   box-shadow:
-    inset 0 0 0 1px rgba(255, 42, 109, 0.75),
-    0 0 14px rgba(255, 42, 109, 0.3);
+    inset 0 0 0 1px var(--danger),
+    0 0 14px var(--theme-death);
 }
 
 .battle-board__cell.is-ability {
-  background: rgba(255, 106, 0, 0.28);
-  box-shadow: inset 0 0 0 1px rgba(255, 106, 0, 0.8);
+  background: var(--theme-ability);
+  box-shadow: inset 0 0 0 1px var(--warning, var(--accent-neon));
 }
 
 .battle-board__cell.is-support {
-  box-shadow: inset 0 0 0 1px rgba(0, 240, 255, 0.35);
-  background: rgba(0, 240, 255, 0.1);
+  box-shadow: inset 0 0 0 1px var(--accent-neon);
+  background: var(--theme-support);
 }
 
 .battle-board__cell.is-ally {
@@ -119,7 +115,7 @@
 }
 
 .battle-board__cell.is-selected {
-  outline: 2px solid var(--cp-yellow);
+  outline: 2px solid var(--theme-selected, var(--accent-neon));
   outline-offset: -2px;
   z-index: 1;
 }

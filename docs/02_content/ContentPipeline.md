@@ -2,24 +2,41 @@
 
 | Поле | Значение |
 |------|----------|
-| Status | CHARTER |
+| Status | ACTIVE |
 | Owner | Lead GD + Tech Lead |
-| Last updated | 2026-07-20 |
+| Last updated | 2026-07-21 |
 | Related | Units, Assets, CodingStandards |
 | Full map | [DocMap.md](../00_meta/DocMap.md) |
 
 ## 1. Цель документа
 
-Как контент-дизайнер добавляет юнита/фракцию от docs → data → проверка — без хаоса в PR.
+Как добавить юнита/фракцию: docs → game database → PNG → проверка — без правок боевых систем.
 
-## 2. Целевой процесс
+## 2. Процесс: новый юнит
 
-1. Запись в Units / Factions / Balance (DRAFT → APPROVED)
-2. Данные каталога в `src/data/catalog` (или преемник)
-3. Ассеты по Assets.md
-4. Тесты валидации / смоук матча
-5. Changelog + при необходимости Balance changelog
+1. Описание в [Units.md](Units.md) / фракционном doc (при необходимости).
+2. Запись в `src/data/catalog/armyBuilder/{faction}.catalog.ts` (или edgerunners).
+3. PNG в `public/assets/units/{id}.png`.
+4. Опционально: ability / commander / ripperdoc / legendary profile.
+5. Проверка: `npm run test` (включая `gameDatabase.core.test.ts`), смоук Army Builder / battle.
+6. Changelog при заметном изменении ростера.
 
-## 3. Режим обновления
+## 3. Точки входа в коде
 
-Да — когда меняется способ хранения контента.
+| Нужно | Импорт |
+|-------|--------|
+| Фасад для людей | `src/content` |
+| Весь контент runtime | `src/data/gameDatabase` |
+| Юниты | `UnitSystem` |
+| Карты / победа / режимы | `content` → maps / victory / modes |
+| Визуал SVG / обложки | `src/data/visual` + `public/assets/unit-icons` |
+| Тема фракции | `ThemeEngine` |
+
+Подробные чеклисты: [ExtensionGuide.md](../04_engineering/ExtensionGuide.md).
+
+## 4. Запрещено
+
+- Хардкод статов/имён юнитов в React-компонентах
+- Base64-портреты в коде
+- Дублировать каталог внутри Battle System
+- Switch по всем unitId в engine — только реестры

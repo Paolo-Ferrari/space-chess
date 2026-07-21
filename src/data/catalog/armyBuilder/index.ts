@@ -1,9 +1,11 @@
 import type {
   FactionDefinition,
+  UnitCatalogEntry,
   UnitDefinition,
 } from "../../../domain/armyBuilder/types";
 import { BalanceSystem } from "../../../domain/balance/balanceSystem";
 import { listEdgerunnerUnits } from "../edgerunners";
+import { defineUnit } from "../units/defineUnit";
 
 import { ARASAKA_FACTION, ARASAKA_UNITS } from "./arasaka.catalog";
 import { MILITECH_FACTION, MILITECH_UNITS } from "./militech.catalog";
@@ -29,11 +31,11 @@ import {
 } from "./6th-street.catalog";
 
 /**
- * Army Builder catalog registry.
+ * Army Builder catalog registry — playable unit game database.
  *
  * Army Builder / UI never import a faction by name.
- * To add a faction later: create `*.catalog.ts` and append to FACTIONS / UNITS.
- * Edgerunners are a neutral pool (not a faction) — append via edgerunners catalog.
+ * To add a unit: one catalog entry + PNG at `public/assets/units/{id}.png`.
+ * Edgerunners are a neutral pool — append via edgerunners catalog.
  */
 const FACTIONS: FactionDefinition[] = [
   ARASAKA_FACTION,
@@ -48,7 +50,7 @@ const FACTIONS: FactionDefinition[] = [
   SIXTH_STREET_FACTION,
 ];
 
-const UNITS: UnitDefinition[] = [
+const RAW_UNITS: UnitCatalogEntry[] = [
   ...ARASAKA_UNITS,
   ...MILITECH_UNITS,
   ...MAELSTROM_UNITS,
@@ -59,6 +61,11 @@ const UNITS: UnitDefinition[] = [
   ...NCPD_UNITS,
   ...ANIMALS_UNITS,
   ...SIXTH_STREET_UNITS,
+];
+
+/** Faction units finalized once; edgerunners already finalized in their registry. */
+const UNITS: UnitDefinition[] = [
+  ...RAW_UNITS.map(defineUnit),
   ...listEdgerunnerUnits(),
 ];
 

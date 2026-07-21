@@ -1,8 +1,8 @@
-import { getUnitById, listUnits } from "../../data/catalog/armyBuilder";
+import { getUnitById, listUnits } from "../../data/gameDatabase";
 import type { UnitDefinition } from "../armyBuilder/types";
 
 /**
- * Unit System — static unit definitions only.
+ * Unit System — reads the game database (catalog), never hardcodes content.
  * Runtime HP/position live in battle UnitRuntime.
  */
 export const UnitSystem = {

@@ -1,6 +1,6 @@
 import type {
   FactionDefinition,
-  UnitDefinition,
+  UnitCatalogEntry,
 } from "../../../domain/armyBuilder/types";
 
 /**
@@ -15,7 +15,7 @@ export const SIXTH_STREET_FACTION: FactionDefinition = {
     "Огневая мощь и дисциплина. Дальний бой и укрепление позиций.",
 };
 
-export const SIXTH_STREET_UNITS: UnitDefinition[] = [
+export const SIXTH_STREET_UNITS: UnitCatalogEntry[] = [
   {
     id: "6th-street-commander",
     factionId: SIXTH_STREET_FACTION.id,

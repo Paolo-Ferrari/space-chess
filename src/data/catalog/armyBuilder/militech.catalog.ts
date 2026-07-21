@@ -1,6 +1,6 @@
 import type {
   FactionDefinition,
-  UnitDefinition,
+  UnitCatalogEntry,
 } from "../../../domain/armyBuilder/types";
 
 /**
@@ -15,7 +15,7 @@ export const MILITECH_FACTION: FactionDefinition = {
     "Военная корпорация. Тяжёлое вооружение, броня и огневая мощь. Техника и танки на поле.",
 };
 
-export const MILITECH_UNITS: UnitDefinition[] = [
+export const MILITECH_UNITS: UnitCatalogEntry[] = [
   {
     id: "militech-commander",
     factionId: MILITECH_FACTION.id,

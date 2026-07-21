@@ -1,6 +1,6 @@
 import type {
   FactionDefinition,
-  UnitDefinition,
+  UnitCatalogEntry,
 } from "../../../domain/armyBuilder/types";
 
 /**
@@ -15,7 +15,7 @@ export const VALENTINOS_FACTION: FactionDefinition = {
     "Командная игра и взаимная поддержка. Сильны рядом с союзниками.",
 };
 
-export const VALENTINOS_UNITS: UnitDefinition[] = [
+export const VALENTINOS_UNITS: UnitCatalogEntry[] = [
   {
     id: "valentinos-commander",
     factionId: VALENTINOS_FACTION.id,

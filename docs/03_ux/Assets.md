@@ -2,30 +2,51 @@
 
 | Поле | Значение |
 |------|----------|
-| Status | DRAFT |
+| Status | ACTIVE |
 | Owner | Art Lead / Tech Lead |
-| Last updated | 2026-07-20 |
+| Last updated | 2026-07-21 |
 | Related | Units, UIFlow, Factions |
 | Full map | [DocMap.md](../00_meta/DocMap.md) |
 
 ## 1. Цель документа
 
-Пайплайн арта/звука/иконок/глифов и конвенции именования.
+Конвенции хранения арта. Юнит-арты — обычные PNG, не Base64.
 
-## 2. Утверждённое направление
+## 2. Два канала визуала юнитов
 
-- Визуальный тон: Cyberpunk 2077 / Night City
-- Тема в коде: CSS variables / шрифты (см. `src/styles`)
-- Глифы юнитов — в каталоге данных (текущий MVP)
+### 2.1 Игровое поле (фракционные пиктограммы)
 
-## 3. Разделы (запланированные)
+| Правило | Значение |
+|---------|----------|
+| Технология | SVG-файлы + `<img>` |
+| Папка | `public/assets/unit-icons/{unitId}.svg` |
+| Компонент | `UnitIcon` → `UnitToken` / Deployment |
+| Оверрайды | `src/data/visual/visualRegistry.ts` (unit / group / faction) |
+| Тема UI | `src/theme` Theme Engine |
+| Генерация | `npm run assets:svgs` |
 
-1. Типы ассетов (UI, фигуры, VFX, SFX, музыка)
-2. Нейминг и папки
-3. Форматы и лимиты размера
-4. Лицензии / источники
-5. Связь ассета с unit id / faction id
+Обложки карточек (большие арты): `coverImage` в visual overrides → `public/assets/…`.  
+Расширение: [ExtensionGuide.md](../04_engineering/ExtensionGuide.md).
 
-## 4–6
+### 2.2 Army Builder / карточки (полноценные арты)
 
-Арт-пайплайн, интеграция в UI. ← Units, UI Flow, Factions; → Frontend. Обновление: да.
+| Правило | Значение |
+|---------|----------|
+| Папка | `public/assets/units/` |
+| Имя файла | `{unitId}.png` |
+| Ссылка в данных | `imagePath: "/assets/units/{unitId}.png"` |
+| UI | `UnitPortrait` (Army Builder, карточки) |
+
+```bash
+node scripts/generate-unit-placeholders.mjs
+```
+
+## 3. Типы ассетов (остальное)
+
+- UI / brand — `src/styles`, `public/favicon.svg`
+- SFX — `AudioManager` (Web Audio), файлы позже
+- Faction colors — `src/ui/visual/factionTheme.ts`
+
+## 4. Связь с unit id
+
+`UnitDefinition.imagePath` — единственный контракт между данными и UI.

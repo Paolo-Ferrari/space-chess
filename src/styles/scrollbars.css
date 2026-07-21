@@ -1,0 +1,45 @@
+/**
+ * Game-styled scrollbars — uses Theme Engine CSS vars.
+ * Applies globally; theme switch recolors thumb/track automatically.
+ */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-neon, #fcee0a) var(--bg-deep, #050506);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: color-mix(in srgb, var(--bg-deep, #050506) 88%, #000);
+  border-left: 1px solid color-mix(in srgb, var(--glass-border, #fcee0a) 35%, transparent);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    var(--accent-neon, #fcee0a),
+    color-mix(in srgb, var(--accent-neon, #fcee0a) 45%, #000)
+  );
+  border: 2px solid var(--bg-deep, #050506);
+  clip-path: polygon(
+    0 0,
+    calc(100% - 4px) 0,
+    100% 4px,
+    100% 100%,
+    4px 100%,
+    0 calc(100% - 4px)
+  );
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-neon, #fcee0a);
+  box-shadow: 0 0 10px var(--glow, rgba(252, 238, 10, 0.45));
+}
+
+*::-webkit-scrollbar-corner {
+  background: var(--bg-deep, #050506);
+}

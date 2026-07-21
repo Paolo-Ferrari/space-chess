@@ -1,0 +1,9 @@
+/** animals faction board icons */
+export { Icon_AnimalsCommander } from "./animals-commander";
+export { Icon_AnimalsRipperdoc } from "./animals-ripperdoc";
+export { Icon_AnimalsBrawler } from "./animals-brawler";
+export { Icon_AnimalsTank } from "./animals-tank";
+export { Icon_AnimalsSlugger } from "./animals-slugger";
+export { Icon_AnimalsWrestler } from "./animals-wrestler";
+export { Icon_AnimalsRoider } from "./animals-roider";
+export { Icon_AnimalsLegendary } from "./animals-legendary";

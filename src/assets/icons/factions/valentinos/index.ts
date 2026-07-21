@@ -1,0 +1,9 @@
+/** valentinos faction board icons */
+export { Icon_ValentinosCommander } from "./valentinos-commander";
+export { Icon_ValentinosRipperdoc } from "./valentinos-ripperdoc";
+export { Icon_ValentinosSoldier } from "./valentinos-soldier";
+export { Icon_ValentinosGuardian } from "./valentinos-guardian";
+export { Icon_ValentinosGun } from "./valentinos-gun";
+export { Icon_ValentinosBrother } from "./valentinos-brother";
+export { Icon_ValentinosPriest } from "./valentinos-priest";
+export { Icon_ValentinosLegendary } from "./valentinos-legendary";

@@ -1,6 +1,6 @@
 import type {
   FactionDefinition,
-  UnitDefinition,
+  UnitCatalogEntry,
 } from "../../../domain/armyBuilder/types";
 
 /**
@@ -15,7 +15,7 @@ export const ANIMALS_FACTION: FactionDefinition = {
     "Физическая сила и устойчивость. Высокий HP, ближний бой, почти без технологий.",
 };
 
-export const ANIMALS_UNITS: UnitDefinition[] = [
+export const ANIMALS_UNITS: UnitCatalogEntry[] = [
   {
     id: "animals-commander",
     factionId: ANIMALS_FACTION.id,

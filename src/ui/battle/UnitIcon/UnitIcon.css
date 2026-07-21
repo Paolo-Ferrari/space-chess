@@ -1,0 +1,86 @@
+.unit-icon {
+  display: inline-grid;
+  place-items: center;
+  width: var(--unit-icon-size, 44px);
+  height: var(--unit-icon-size, 44px);
+  flex-shrink: 0;
+  line-height: 0;
+  transition: transform 160ms ease, opacity 160ms ease;
+}
+
+.unit-icon__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.unit-icon.is-hover,
+.unit-icon:hover {
+  transform: scale(1.08);
+}
+
+.unit-icon.is-selected {
+  transform: scale(1.12);
+}
+
+.unit-icon.is-enemyTarget {
+  filter: hue-rotate(-10deg) saturate(1.4);
+}
+
+.unit-icon.is-damaged {
+  animation: unit-icon-damage 420ms ease;
+}
+
+.unit-icon.is-disabled {
+  opacity: 0.4;
+}
+
+.unit-icon.is-overclock {
+  animation: unit-icon-overclock 1.1s ease-in-out infinite;
+}
+
+.unit-icon.is-healed {
+  animation: unit-icon-heal 700ms ease;
+}
+
+.unit-icon.is-legendary {
+  transform: scale(1.05);
+}
+
+@keyframes unit-icon-damage {
+  0% {
+    filter: none;
+  }
+  35% {
+    filter: brightness(2) sepia(1) hue-rotate(-40deg);
+    transform: scale(1.06);
+  }
+  100% {
+    filter: none;
+  }
+}
+
+@keyframes unit-icon-overclock {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+@keyframes unit-icon-heal {
+  0% {
+    filter: none;
+  }
+  40% {
+    filter: brightness(1.3) saturate(1.2);
+  }
+  100% {
+    filter: none;
+  }
+}

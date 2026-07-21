@@ -1,6 +1,6 @@
 import type {
   FactionDefinition,
-  UnitDefinition,
+  UnitCatalogEntry,
 } from "../../../domain/armyBuilder/types";
 
 /**
@@ -15,7 +15,7 @@ export const VOODOO_BOYS_FACTION: FactionDefinition = {
     "Нетраннеры и цифровой контроль. Хакинг, дебаффы, отключение ритма врага.",
 };
 
-export const VOODOO_BOYS_UNITS: UnitDefinition[] = [
+export const VOODOO_BOYS_UNITS: UnitCatalogEntry[] = [
   {
     id: "voodoo-boys-commander",
     factionId: VOODOO_BOYS_FACTION.id,

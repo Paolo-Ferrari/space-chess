@@ -24,9 +24,17 @@ import type {
   Position,
   UnitRuntime,
 } from "./types";
-import { evaluateVictory } from "./victorySystem";
+import { getDefaultVictoryRule, getVictoryRule } from "../../data/catalog/victory";
 
 const catalogLookup = { getUnitById: (id: string) => UnitSystem.get(id) };
+
+function runVictory(state: BattleState) {
+  const rule =
+    (state.victoryRuleId
+      ? getVictoryRule(state.victoryRuleId)
+      : undefined) ?? getDefaultVictoryRule();
+  return rule.evaluate(state, catalogLookup);
+}
 
 function projectLog(state: BattleState, events: GameEvent[]): BattleState {
   if (events.length === 0) {
@@ -103,7 +111,7 @@ export class BattleManager {
   private commitApply(
     apply: { state: BattleState; events: GameEvent[] },
   ): BattleState {
-    const afterVictory = evaluateVictory(apply.state, catalogLookup);
+    const afterVictory = runVictory(apply.state);
     const allEvents = [...apply.events, ...afterVictory.events];
     return this.commit(afterVictory.state, allEvents);
   }

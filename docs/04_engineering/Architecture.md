@@ -4,8 +4,9 @@
 |------|----------|
 | Status | DRAFT → целевая архитектура v1 + core stabilization |
 | Owner | Lead Software Architect |
-| Last updated | 2026-07-20 |
+| Last updated | 2026-07-21 |
 | Stabilization | [CoreStabilizationAudit.md](CoreStabilizationAudit.md) |
+| Extension | [ExtensionGuide.md](ExtensionGuide.md) |
 | Related | FrontendArchitecture, BackendArchitecture, DomainModel, Multiplayer, API, ADR |
 | Full map | [DocMap.md](../00_meta/DocMap.md) |
 
@@ -436,23 +437,24 @@ MatchHistory
 
 ## 16. Масштабируемость (без переписывания)
 
-| Добавление | Куда кладём | Что не трогаем |
-|------------|-------------|----------------|
-| Новая фракция | `game-catalog` + Assets + Factions.md | MatchEngine API, UI shell |
-| Новая карта | `MapDefinition` + MapFactory | Правила хода (если mode тот же) |
-| Новый имплант | ImplantDefinition + Implant strategy | Юниты без командира |
-| Новая способность | AbilityDefinition + AbilityStrategy | Transport, Rating |
-| Новый режим | GameMode + Victory/Turn strategies | Каталог фракций |
-| ИИ | `AiPolicyStrategy` + адаптер «игрок = AI» | UI матча (тот же Action pipeline) |
-| Мультиплеер online | `ServerAuthority` + API + Multiplayer | `game-core` apply |
-| PvP ranked | Matchmaking + Rating + mode flag | Local mode |
-| Рейтинг | RatingService + storage | Combat formulas |
+Практические чеклисты: **[ExtensionGuide.md](ExtensionGuide.md)** · фасад кода: `src/content/`.
+
+| Добавление | Куда кладём (сейчас в `src/`) | Что не трогаем |
+|------------|------------------------------|----------------|
+| Новая фракция | `data/catalog/armyBuilder` + `theme/factionThemes` | Battle apply loop |
+| Новая карта / поле | `data/catalog/maps/*.map.ts` | Movement/combat formulas |
+| Правило победы | `data/catalog/victory/*.rule.ts` | UI ResultScreen API |
+| Режим матча | `data/catalog/modes/*.mode.ts` | Каталог юнитов |
+| SVG / обложка юнита | `public/assets/unit-icons` + `data/visual` | Domain combat |
+| Способность | `data/catalog/abilities` + Ability System | Transport |
+| ИИ | `domain/ai` | UI матча (тот же Action pipeline) |
+| Мультиплеер online | future `apps/api` | `domain/battle` apply |
 
 **Инварианты расширения:**
 
 - Новый контент = **id + data + optional strategy registration**
 - Новый транспорт = новый Adapter, тот же `Action`
-- Новый режим = strategy mode, не fork `MatchState` на «RankedMatchStateV2` с другими полями без нужды
+- Новый режим = данные (map + victory + features), не fork `BattleState`
 
 ---
 
@@ -477,13 +479,14 @@ MatchHistory
 
 ## 18. Соответствие текущему коду (миграционный мост)
 
-Сейчас код живёт в `src/` (app / data / domain / services / ui). Целевая архитектура **не требует big-bang rewrite**:
+Сейчас код живёт в `src/` (app / content / data / domain / services / theme / ui). Целевая архитектура **не требует big-bang rewrite**:
 
-1. Считать `src/domain` + чистые части `services/match` будущим `packages/game-core`.  
-2. Считать `src/data/catalog` будущим `packages/game-catalog`.  
-3. UI остаётся в `apps/web`.  
-4. `apps/api` появляется при online.  
-5. Любой новый код писать **уже по границам** этого документа, даже до физического переноса папок.
+1. Считать `src/domain` будущим `packages/game-core`.  
+2. Считать `src/data/catalog` + `src/content` будущим `packages/game-catalog`.  
+3. Реестры уже живые: **maps**, **victory**, **modes**, **visual**, **gameDatabase**.  
+4. UI остаётся в `src/ui` → позже `apps/web`.  
+5. `apps/api` появляется при online.  
+6. Любой новый код писать **уже по границам** ExtensionGuide, даже до физического переноса папок.
 
 ---
 

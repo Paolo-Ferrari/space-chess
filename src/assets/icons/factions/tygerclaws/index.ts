@@ -1,0 +1,9 @@
+/** tygerclaws faction board icons */
+export { Icon_TygerClawsCommander } from "./tyger-claws-commander";
+export { Icon_TygerClawsRipperdoc } from "./tyger-claws-ripperdoc";
+export { Icon_TygerClawsBlade } from "./tyger-claws-blade";
+export { Icon_TygerClawsAssassin } from "./tyger-claws-assassin";
+export { Icon_TygerClawsRunner } from "./tyger-claws-runner";
+export { Icon_TygerClawsMonk } from "./tyger-claws-monk";
+export { Icon_TygerClawsSmoke } from "./tyger-claws-smoke";
+export { Icon_TygerClawsLegendary } from "./tyger-claws-legendary";

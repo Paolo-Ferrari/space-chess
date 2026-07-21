@@ -65,6 +65,10 @@ export interface BattleState {
   winner: PlayerId | null;
   /** Human-readable projection of domain events (UI log). */
   log: BattleLogEntry[];
+  /** Content ids — resolve maps / victory / modes without hardcoding. */
+  mapId?: string;
+  victoryRuleId?: string;
+  modeId?: string;
 }
 
 /** Snapshot of catalog data needed during battle (no UI). */

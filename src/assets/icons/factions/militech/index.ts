@@ -1,0 +1,9 @@
+/** militech faction board icons */
+export { Icon_MilitechCommander } from "./militech-commander";
+export { Icon_MilitechRipperdoc } from "./militech-ripperdoc";
+export { Icon_MilitechTrooper } from "./militech-trooper";
+export { Icon_MilitechGunner } from "./militech-gunner";
+export { Icon_MilitechMech } from "./militech-mech";
+export { Icon_MilitechTank } from "./militech-tank";
+export { Icon_MilitechDrone } from "./militech-drone";
+export { Icon_MilitechLegendary } from "./militech-legendary";

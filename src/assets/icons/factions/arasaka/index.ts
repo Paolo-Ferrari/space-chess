@@ -1,0 +1,9 @@
+/** arasaka faction board icons */
+export { Icon_ArasakaCommander } from "./arasaka-commander";
+export { Icon_ArasakaRipperdoc } from "./arasaka-ripperdoc";
+export { Icon_ArasakaSoldier } from "./arasaka-soldier";
+export { Icon_ArasakaElite } from "./arasaka-elite";
+export { Icon_ArasakaCyberNinja } from "./arasaka-cyber-ninja";
+export { Icon_ArasakaHeavy } from "./arasaka-heavy";
+export { Icon_ArasakaRecon } from "./arasaka-recon";
+export { Icon_ArasakaAdamSmasher } from "./arasaka-adam-smasher";

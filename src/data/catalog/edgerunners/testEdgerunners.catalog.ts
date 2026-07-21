@@ -1,12 +1,13 @@
-import type { UnitDefinition } from "../../../domain/armyBuilder/types";
+import type { UnitCatalogEntry } from "../../../domain/armyBuilder/types";
 import type { EdgerunnerDefinition } from "../../../domain/edgerunner/types";
 import { EDGERUNNER_POOL_ID } from "../../../domain/edgerunner/types";
+import { unitImagePath } from "../../assets/unitArt";
 
 /**
  * Test edgerunners — not final roster / balance.
  * Reuse Ability System test abilities for hire verification.
  */
-export const TEST_EDGERUNNER_UNITS: UnitDefinition[] = [
+export const TEST_EDGERUNNER_UNITS: UnitCatalogEntry[] = [
   {
     id: "edge-solo-blade",
     factionId: EDGERUNNER_POOL_ID,
@@ -17,6 +18,9 @@ export const TEST_EDGERUNNER_UNITS: UnitDefinition[] = [
     description:
       "Боевой наёмник. Высокий урон в ближнем бою. Тестовый Solo.",
     abilities: ["ability-power-strike"],
+    imagePath: unitImagePath("edge-solo-blade"),
+    rarity: "rare",
+    isLegendary: false,
   },
   {
     id: "edge-netrunner-ghost",
@@ -28,6 +32,9 @@ export const TEST_EDGERUNNER_UNITS: UnitDefinition[] = [
     description:
       "Контроль и хакинг на поле. Тестовый Netrunner (Slow).",
     abilities: ["ability-slow"],
+    imagePath: unitImagePath("edge-netrunner-ghost"),
+    rarity: "rare",
+    isLegendary: false,
   },
   {
     id: "edge-techie-wrench",
@@ -39,6 +46,9 @@ export const TEST_EDGERUNNER_UNITS: UnitDefinition[] = [
     description:
       "Поддержка и полевой ремонт. Тестовый Techie (Heal).",
     abilities: ["ability-heal"],
+    imagePath: unitImagePath("edge-techie-wrench"),
+    rarity: "rare",
+    isLegendary: false,
   },
 ];
 

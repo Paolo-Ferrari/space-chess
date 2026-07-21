@@ -3,6 +3,7 @@ import type { UnitDefinition } from "../../../domain/armyBuilder/types";
 import { BalanceSystem } from "../../../domain/balance/balanceSystem";
 import { EdgerunnerSystem } from "../../../domain/edgerunner/edgerunnerSystem";
 import { RipperdocSystem } from "../../../domain/ripperdoc/ripperdocSystem";
+import UnitPortrait from "../../components/game/UnitPortrait/UnitPortrait";
 import Panel from "../../components/panels/Panel/Panel";
 import UnitTypeBadge from "../UnitTypeBadge/UnitTypeBadge";
 
@@ -29,7 +30,16 @@ function UnitInfoCard({ unit }: UnitInfoCardProps) {
   return (
     <Panel eyebrow="Сканер" title={unit.name}>
       <div className="unit-info-card">
-        <UnitTypeBadge type={unit.type} />
+        <div className="unit-info-card__header">
+          <UnitPortrait unit={unit} size="lg" />
+          <div>
+            <UnitTypeBadge type={unit.type} />
+            <p className="unit-info-card__role">
+              {unit.rarity}
+              {unit.isLegendary ? " · legendary" : ""}
+            </p>
+          </div>
+        </div>
         <p className="unit-info-card__role">Роль баланса: {role}</p>
         {ripper ? (
           <p className="unit-info-card__role">

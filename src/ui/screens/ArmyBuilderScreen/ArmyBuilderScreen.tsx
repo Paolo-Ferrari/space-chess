@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   type Army,
@@ -65,6 +65,8 @@ interface ArmyBuilderScreenProps {
   onSaved: (army: Army) => void;
   /** Save + jump straight into Protocol Match. */
   onStartBattle?: (army: Army) => void;
+  /** Theme Engine — preview faction UI while drafting. */
+  onFactionChange?: (factionId: string) => void;
   initialArmy?: Army | null;
   ownerId?: string | null;
 }
@@ -73,6 +75,7 @@ function ArmyBuilderScreen({
   onBack,
   onSaved,
   onStartBattle,
+  onFactionChange,
   initialArmy = null,
   ownerId = null,
 }: ArmyBuilderScreenProps) {
@@ -92,6 +95,10 @@ function ArmyBuilderScreen({
     null,
   );
   const [feedback, setFeedback] = useState("");
+
+  useEffect(() => {
+    onFactionChange?.(draft.factionId);
+  }, [draft.factionId, onFactionChange]);
 
   const availableUnits = useMemo(() => {
     const factionUnits = FactionSystem.listUnits(draft.factionId);

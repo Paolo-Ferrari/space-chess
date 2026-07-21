@@ -9,7 +9,10 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "assets:units": "node scripts/generate-unit-placeholders.mjs",
+    "assets:icons": "node scripts/generate-faction-icons.mjs",
+    "assets:svgs": "node scripts/generate-unit-svgs.mjs"
   },
   "dependencies": {
     "react": "^19.2.7",

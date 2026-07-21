@@ -72,6 +72,7 @@ export const LegendarySystem = {
       return false;
     }
     return (
+      definition.isLegendary ||
       definition.type === "legendary" ||
       Boolean(getLegendaryProfileByUnitId(definition.id))
     );

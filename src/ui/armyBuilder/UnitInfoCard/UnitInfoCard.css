@@ -8,6 +8,12 @@
   gap: 14px;
 }
 
+.unit-info-card__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .unit-info-card__stats {
   margin: 0;
   display: grid;

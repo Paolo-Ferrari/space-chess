@@ -1,0 +1,9 @@
+/** sixthstreet faction board icons */
+export { Icon_6thStreetCommander } from "./6th-street-commander";
+export { Icon_6thStreetRipperdoc } from "./6th-street-ripperdoc";
+export { Icon_6thStreetRifle } from "./6th-street-rifle";
+export { Icon_6thStreetMg } from "./6th-street-mg";
+export { Icon_6thStreetFort } from "./6th-street-fort";
+export { Icon_6thStreetMarksman } from "./6th-street-marksman";
+export { Icon_6thStreetPatrol } from "./6th-street-patrol";
+export { Icon_6thStreetLegendary } from "./6th-street-legendary";

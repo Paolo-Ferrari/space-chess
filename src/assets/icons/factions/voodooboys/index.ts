@@ -1,0 +1,9 @@
+/** voodooboys faction board icons */
+export { Icon_VoodooBoysCommander } from "./voodoo-boys-commander";
+export { Icon_VoodooBoysRipperdoc } from "./voodoo-boys-ripperdoc";
+export { Icon_VoodooBoysNetrunner } from "./voodoo-boys-netrunner";
+export { Icon_VoodooBoysGuard } from "./voodoo-boys-guard";
+export { Icon_VoodooBoysGhost } from "./voodoo-boys-ghost";
+export { Icon_VoodooBoysIce } from "./voodoo-boys-ice";
+export { Icon_VoodooBoysSignal } from "./voodoo-boys-signal";
+export { Icon_VoodooBoysLegendary } from "./voodoo-boys-legendary";

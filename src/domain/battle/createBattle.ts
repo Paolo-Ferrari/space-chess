@@ -1,5 +1,15 @@
 import type { Army } from "../armyBuilder/types";
 import { CommanderSystem } from "../commander/commanderSystem";
+import {
+  getDefaultMap,
+  getMapById,
+  type MapDefinition,
+} from "../../data/catalog/maps";
+import {
+  getDefaultMatchMode,
+  getMatchMode,
+} from "../../data/catalog/modes";
+import { getDefaultVictoryRule } from "../../data/catalog/victory";
 import { autoPlaceUnits } from "../deployment";
 import { LegendarySystem } from "../legendary/legendarySystem";
 import { UnitSystem } from "../unit/unitSystem";
@@ -97,26 +107,12 @@ function placeFromPositions(
   return units;
 }
 
-/** Bottom rows for player 0 (y = 6..7) — fallback when no placements. */
-function playerSpawnSlots(): Position[] {
-  const slots: Position[] = [];
-  for (let y = 7; y >= 6; y -= 1) {
-    for (let x = 0; x < 8; x += 1) {
-      slots.push({ x, y });
-    }
-  }
-  return slots;
+function playerSpawnSlots(map: MapDefinition): Position[] {
+  return map.deploymentP0.cells;
 }
 
-/** Top rows for player 1 (y = 0..1). */
-function enemySpawnSlots(): Position[] {
-  const slots: Position[] = [];
-  for (let y = 0; y <= 1; y += 1) {
-    for (let x = 0; x < 8; x += 1) {
-      slots.push({ x, y });
-    }
-  }
-  return slots;
+function enemySpawnSlots(map: MapDefinition): Position[] {
+  return map.deploymentP1.cells;
 }
 
 /**
@@ -155,12 +151,31 @@ function enemyEntriesFromArmy(
   }));
 }
 
+export interface AssembleBattleOptions {
+  mapId?: string;
+  modeId?: string;
+  victoryRuleId?: string;
+}
+
+function resolveMap(mapId?: string): MapDefinition {
+  return (mapId ? getMapById(mapId) : undefined) ?? getDefaultMap();
+}
+
 function assembleBattle(
   playerArmy: Army,
   enemyArmy: Army | null,
   enemyFallbackIds: readonly string[],
+  options: AssembleBattleOptions = {},
 ): BattleState {
-  const board = createBoard();
+  const mode =
+    (options.modeId ? getMatchMode(options.modeId) : undefined) ??
+    getDefaultMatchMode();
+  const map = resolveMap(options.mapId ?? mode.mapId);
+  const victoryRuleId =
+    options.victoryRuleId ?? mode.victoryRuleId ?? getDefaultVictoryRule().id;
+  const modeId = options.modeId ?? mode.id;
+
+  const board = createBoard(map.width, map.height);
   const playerUnits = placeFromPositions(
     playerEntriesFromArmy(playerArmy),
     0,
@@ -171,7 +186,8 @@ function assembleBattle(
     ? enemyEntriesFromArmy(enemyArmy)
     : enemyFallbackIds.map((unitId, index) => ({
         unitId,
-        position: enemySpawnSlots()[index] ?? playerSpawnSlots()[0],
+        position:
+          enemySpawnSlots(map)[index] ?? playerSpawnSlots(map)[0],
       }));
 
   const enemyUnits = placeFromPositions(
@@ -196,17 +212,24 @@ function assembleBattle(
     phase: "playing",
     winner: null,
     log: [],
+    mapId: map.id,
+    victoryRuleId,
+    modeId,
   };
 }
 
-export function createBattleFromArmy(playerArmy: Army): BattleState {
-  return assembleBattle(playerArmy, null, ENEMY_TEST_UNIT_IDS);
+export function createBattleFromArmy(
+  playerArmy: Army,
+  options?: AssembleBattleOptions,
+): BattleState {
+  return assembleBattle(playerArmy, null, ENEMY_TEST_UNIT_IDS, options);
 }
 
 /** Both seats from saved Combat Networks (balance sims / future PvP). */
 export function createBattleFromArmies(
   playerArmy: Army,
   enemyArmy: Army,
+  options?: AssembleBattleOptions,
 ): BattleState {
-  return assembleBattle(playerArmy, enemyArmy, []);
+  return assembleBattle(playerArmy, enemyArmy, [], options);
 }

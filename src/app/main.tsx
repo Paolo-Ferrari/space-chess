@@ -8,6 +8,8 @@ import "../styles/variables.css";
 import "../styles/brand.css";
 import "../styles/visual.css";
 import "../styles/globals.css";
+import "../styles/scrollbars.css";
+import "../theme/themes.css";
 
 
 ReactDOM.createRoot(

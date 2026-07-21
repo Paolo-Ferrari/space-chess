@@ -24,6 +24,14 @@ export type UnitType =
   | "legendary"
   | "edgerunner";
 
+/** Presentation / collection rarity — independent of combat role `type`. */
+export type UnitRarity =
+  | "common"
+  | "uncommon"
+  | "rare"
+  | "epic"
+  | "legendary";
+
 /** Combat-facing base stats (combat system not implemented yet). */
 export interface UnitStats {
   hp: number;
@@ -46,6 +54,10 @@ export interface FactionDefinition {
   description: string;
 }
 
+/**
+ * Canonical unit record in the game database.
+ * UI / battle read this via UnitSystem — never hardcode unit stats in components.
+ */
 export interface UnitDefinition {
   id: string;
   factionId: string;
@@ -54,9 +66,22 @@ export interface UnitDefinition {
   cost: number;
   stats: UnitStats;
   description: string;
-  /** Future combat hooks — keep empty for now. */
   abilities: UnitAbilityId[];
+  /** Public URL to PNG under `/assets/units/` (never Base64). */
+  imagePath: string;
+  rarity: UnitRarity;
+  isLegendary: boolean;
 }
+
+/**
+ * Authoring shape for faction catalogs.
+ * `imagePath` / `rarity` / `isLegendary` may be omitted — filled by `defineUnit`.
+ */
+export type UnitCatalogEntry = Omit<
+  UnitDefinition,
+  "imagePath" | "rarity" | "isLegendary"
+> &
+  Partial<Pick<UnitDefinition, "imagePath" | "rarity" | "isLegendary">>;
 
 /**
  * Saved army created by the Army Builder.
